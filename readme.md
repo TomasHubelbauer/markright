@@ -129,3 +129,7 @@ diffs which also have code highlighting based on the language tag.
 
 This would break compatibility with existing MarkDown renderers, so I'm still
 weighing the options here.
+
+## To-Do
+
+Add a license - AGPL?
