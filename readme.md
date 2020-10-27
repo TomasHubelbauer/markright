@@ -134,10 +134,6 @@ weighing the options here.
 
 ## To-Do
 
-### Add a license
-
-AGPL
-
 ### Cache the unchanged layers
 
 Do not run the whole document each time, recognize the changed part (usually the
