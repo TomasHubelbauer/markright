@@ -38,9 +38,11 @@ are not too pressing, as MarkRight should be useful even before these are solved
 ## Example
 
 Since this document is named `readme.md`, it itself is a valid MarkRight
-document. Up until this point, it produces no output.
+document. It continues on to show case all the various featutes and elaborates
+on the syntax that enables them. We also have a more focused sample document in
+[`sample.md`](sample.md). Run it by running `npm start`.
 
-To create a file, the following is used:
+Up until this point, `readme.md` produces no output. To create a file, do this:
 
 `hello-world.txt`
 ```
@@ -132,4 +134,23 @@ weighing the options here.
 
 ## To-Do
 
-Add a license - AGPL?
+### Add a license
+
+AGPL
+
+### Cache the unchanged layers
+
+Do not run the whole document each time, recognize the changed part (usually the
+very end) and run only the part that has changed.
+
+### Address code to-do comments
+
+### Add as a global command using `npm link` or something
+
+So that I can have the sample document in a subdirectory and run it easily
+using just the global argument name. Then the sample MarkDown file can be called
+`readme.md` as well.
+
+### Run on watch
+
+Use Nodemon or `fs.watch`.
