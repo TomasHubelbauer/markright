@@ -186,13 +186,18 @@ names of the files being generated:
 
 ## Development
 
-Use `test/readme.md` for test MarkRight content and run MarkRight from source on
-it by running `npm test` which places MarkRight into the global scope by doing
-`npm link` and then runs this fresh binary in `test`. MarkRight defaults to
-`readme.md` if no file name is given, so `test/readme.md` will be run.
+See [Example](#example) on how to run the example with source code version of
+MarkRight.
 
-You can use `npm run watch` which uses Nodemon to watch MarkRight source code
-and MarkDown files.
+You can use `npm run watch` to watch the source code version. It watches it,
+links it to the global scope on each change and then runs it in the `test`
+directory where it defaults to `readme.md`.
+
+Feel free to contribute by filing issues, contributing pull requests etc.
+
+## Support
+
+Email me, open an issue, open a PR, …
 
 ## To-Do
 
