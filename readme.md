@@ -1,5 +1,11 @@
 # MarkRight
 
+![](https://img.shields.io/github/stars/tomashubelbauer/markright)
+![](https://img.shields.io/github/issues/TomasHubelbauer/markright)
+![](https://img.shields.io/github/forks/TomasHubelbauer/markright)
+![](https://img.shields.io/github/license/tomashubelbauer/markright)
+![](https://img.shields.io/badge/sponsor-@tomashubelbauer-orange)
+
 MarkRight is a literate programming tool.
 
 ## Status
@@ -13,6 +19,10 @@ This program is maintained and is of a WIP level of quality and support.
 ## Usage
 
 `markright` (`readme.md`) or `markright document.md`
+
+## License
+
+[AGPL](license.md)
 
 ## Example
 
