@@ -201,3 +201,52 @@ only and which are for updates without repeating the file name ad-nauseam.
 
 Right now MarkDown can be output using MarkRight, but code blocks can't because
 they need to be escaped in code blocks that MarkRight recognizes using `~~~`.
+
+### Consider allowing shell code blocks to check streams in info string
+
+Instead of following each shell code block with `stdout` and `stderr`, add an
+option to specify the expected stdout and stderr in the shell code block info
+string. This way we can still test the streams and exit code, but we can do it
+non-visually too, for cases where that's more appropriate. E.g.:
+
+~~~
+```sh 0 "Hello, world!"
+node .
+```
+~~~
+
+This will check stdout for the given text and also stderr for emptiness.
+
+~~~
+```sh 1 "No argument provided"
+node .
+```
+~~~
+
+This will check stderr for the given text and also stdout for emptiness.
+
+Maybe this could be allowed, too:
+
+~~~
+```sh 1 "Argument count: 0" "No argument provided"
+node .
+```
+~~~
+
+To check both stdout and stderr at the same time.
+
+And maybe it could be allowed to pass in regular expressions instead in case
+things like file names, dates or random numbers are involved. This could also
+enable multi-line checks which while they should really go into their own stream
+check block, could be done in the shell script block too.
+
+### Consider allowing regex pre-processing in stream check blocks
+
+This would be useful for normalizing things like file system  paths, dates and
+random numbers in the output. E.g.:
+
+~~~
+```stdout \d+ g {random number}
+Your random number is: {random number}.
+```
+~~~
