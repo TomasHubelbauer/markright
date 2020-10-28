@@ -153,6 +153,19 @@ console.log(equation);
 This check works fine, but we can improve it by pulling out the operands and the
 operation while we're doing the format check to kill two birds with one stone:
 
-```js calc.js+
-// TODO: Finish this
+```js calc.js
+// Validate the `equation` argument for operand-operation-operand format
+const match = /^(?<leftOperand>\d+)(?<operator>(\+|-|\*|\/))(?<rightOperand>\d+)$/.test(equation);
+if (!match) {
+  console.error('The equation argument does not match the expected format.');
+```
+
+The `match.groups` object will contain the operands and the operator now. We can
+print those instead of the `equation` string:
+
+```patch calc.js
+- // Print the equation argument we received
+- console.log(equation);
++ // Print the equation parts we received
++ console.log(match.groups);
 ```

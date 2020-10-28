@@ -79,7 +79,7 @@ appending at the end of a file.
 ### Insert into a file
 
 ~~~
-```txt name.txt
+```txt name.txt~
 content
 inserted content
 more content
@@ -137,18 +137,14 @@ MarkRight places several limitations on the MarkDown being used as well as the
 names of the files being generated:
 
 - MarkRight syntax might conflict with info text not inteded for MarkRight
-
-  This is extremely unlikely due to the specific MarkRight syntax but possible.
-
+  (this is extremely unlikely due to the specific MarkRight syntax but possible)
 - MarkRight reserves `?` and `+` and the end of file names for special actions
-
-  These symbols are used to indicate file content check and file content append,
-  but on some systems these symbols might be valid file name symbols and MR will
-  not allow placing them into the file name.
-
+  - `?` indicates the file text should be checked against the excepcted text
+  - `+` indicates the code block text is to be appended not to replace the file
+  - `~` indicates the code block text is to be interpolated not to replace file
+  - Some operating systems allows some of these symbols in file names bur MR not
 - MarkRight can not output `` ` `` into a file name as backticks are disallowed
   in MarkDown fenced code block info text
-
 - MarkRight does not support newlines other than `\n` (so, not `\r\n`), we may
   support these in the future, but as of now it has not been a priority
 
@@ -209,6 +205,7 @@ the patch block text is to be inserted in the file.
 This way it remains possible to distinguish which code blocks are for display
 only and which are for updates without repeating the file name ad-nauseam.
 
-### Add support for CRLF or document only supporting CR somewhere
+### Consider adding support for `~~~` to be able to output MarkDown code blocks
 
-### Consider adding support for `~~~` to be able to output MarkDown
+Right now MarkDown can be output using MarkRight, but code blocks can't because
+they need to be escaped in code blocks that MarkRight recognizes using `~~~`.
