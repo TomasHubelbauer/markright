@@ -250,3 +250,27 @@ random numbers in the output. E.g.:
 Your random number is: {random number}.
 ```
 ~~~
+
+### Fix multiple commands in a shell block returning out of the first one only
+
+In the sample, this should work:
+
+~~~
+And with spaces:
+
+```sh
+node calc.js "10 + 2"
+node calc.js "10 - 2"
+node calc.js "10 * 2"
+node calc.js "10 / 2"
+```
+
+```stdout
+12
+8
+20
+5
+```
+~~~
+
+But instead, the `stdout` check returns only `12\n`.
