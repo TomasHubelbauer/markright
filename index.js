@@ -3,5 +3,6 @@
 import MarkRight from './MarkRight.js';
 
 void async function () {
-  new MarkRight(process.argv[2] || 'readme.md').run();
+  const watch = process.argv[3] === '--watch';
+  new MarkRight(process.argv[2] || 'readme.md', watch).run();
 }()

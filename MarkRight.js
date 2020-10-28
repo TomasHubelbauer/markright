@@ -5,8 +5,11 @@ import util from 'util';
 import child_process from 'child_process';
 
 export default class MarkRight {
-  constructor(/** @type {string} */ filePath) {
+  constructor(/** @type {string} */ filePath, /** @type {boolean} */ watch = false) {
     this.filePath = filePath;
+    if (watch) {
+      fs.watch(filePath, this.see.bind(this));
+    }
 
     // The special markers allowed at the end of file name to do special actions
     this.markers = ['?', '+', '-', '±'];
@@ -15,7 +18,18 @@ export default class MarkRight {
     this.threshold = 80;
   }
 
+  see(event, fileName) {
+    console.log(`Noticed ${fileName} ${event}`);
+    this.run().catch(this.exit);
+  }
+
   async run() {
+    if (this.processing) {
+      console.log('Ignored (processing)');
+      return;
+    }
+
+    this.processing = true;
     const text = await fs.promises.readFile(this.filePath, 'utf-8');
 
     // Math fenced code blocks
@@ -58,6 +72,7 @@ export default class MarkRight {
     }
 
     console.log('Processed', this.filePath);
+    this.processing = false;
   }
 
   async file(/** @type {string} */ fileName, /** @type {string} */ text) {

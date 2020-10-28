@@ -6,7 +6,7 @@
   "bin": "index.js",
   "type": "module",
   "scripts": {
-    "test": "npm unlink && npm link && cd test && markright",
-    "watch": "npx nodemon --ext js,json,md --ignore test/calc.js --exec npm test"
+    "test": "npm unlink && npm link && cd test && markright readme.md --watch",
+    "watch": "npx nodemon --ignore test --exec npm test"
   }
 }
