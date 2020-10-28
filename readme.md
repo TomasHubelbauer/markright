@@ -6,7 +6,7 @@
 [![](https://img.shields.io/github/license/tomashubelbauer/markright)](license.md)
 [![](https://img.shields.io/badge/sponsor-@tomashubelbauer-orange)](https://github.com/sponsors/tomashubelbauer)
 
-MarkRight is a literate programming tool.
+**MarkRight** is a literate programming tool.
 
 ## Status
 
