@@ -259,30 +259,6 @@ Your random number is: {random number}.
 ```
 ~~~
 
-### Fix multiple commands in a shell block returning out of the first one only
-
-In the sample, this should work:
-
-~~~
-And with spaces:
-
-```sh
-node calc.js "10 + 2"
-node calc.js "10 - 2"
-node calc.js "10 * 2"
-node calc.js "10 / 2"
-```
-
-```stdout
-12
-8
-20
-5
-```
-~~~
-
-But instead, the `stdout` check returns only `12\n`.
-
 ### Consider consolidating `-` and `±` markers into just `±` (and maybe `+` too)
 
 Right now `-` and `±` work differently so two symbols are used, but we could try

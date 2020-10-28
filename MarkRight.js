@@ -1,4 +1,6 @@
 import fs from 'fs';
+import os from 'os';
+import path from 'path';
 import util from 'util';
 import child_process from 'child_process';
 
@@ -188,9 +190,11 @@ export default class MarkRight {
       this.exit('Shell script can have no argument.');
     }
 
-    // TODO: See if writing this to a temp file and executing it will solve this
-    if (text.trim().includes('\n')) {
-      this.exit('Multi-line shell scripts are not supported yet. Consider `&&`.');
+    // TODO: Use an OS-appropriate shell here
+    if (/\n[^$]/.test(text)) {
+      const tempPath = path.join(os.tmpdir(), 'markright.ps1');
+      await fs.promises.writeFile(tempPath, text);
+      text = 'powershell ' + tempPath;
     }
 
     try {
