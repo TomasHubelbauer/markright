@@ -97,7 +97,8 @@ const [ , , equation, ...rest ] = process.argv;
 
 // Ensure no additional arguments are being passed in
 if (rest.length > 0) {
-  throw new Error('Too many command line arguments, need just one: equation.');
+  console.error('Too many command line arguments, need just one: equation.');
+  process.exit(1);
 }
 
 // Instruct on how to pass the equation argument if missing
