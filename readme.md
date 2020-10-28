@@ -161,13 +161,6 @@ On top of this, if they file name has a MarkRight directive suffix (?, +, -, ±)
 you can leave out even the underscore and just use the directive standalone. MR
 will know to restore the last known file name in this case, too.
 
-## Considerations
-
-There are unsolved problems, such as the exact syntax of the code blocks or how
-to reference external assets being pulled into the project, but these problems
-are not too pressing, as MarkRight should be useful even before these are solved
-(if they ever are).
-
 ## Limitations
 
 MarkRight places several limitations on the MarkDown being used as well as the
@@ -187,6 +180,9 @@ names of the files being generated:
   (this can be worked around using the alternative inline code run syntax)
 - MarkRight does not support newlines other than `\n` (so, not `\r\n`), we may
   support these in the future, but as of now it has not been a priority
+- MarkRight has no direct way of referencing external assets or describe their
+  inclusion into the repository other than plain language or a command block
+  which pulls them in (`mv`, `cp`, `curl`, `wget`, whatever other way…)
 
 ## Development
 
