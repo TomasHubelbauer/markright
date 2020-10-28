@@ -1,15 +1,16 @@
 # Sample
 
+## Introduction
+
 This is a test document used to demonstrate the various features of MarkRight.
 
 Let's build a simple calculator application in Node using MarkRight. We want it
-to support four basic operations: additional, subtraction, multiplication and
-division and we will support equations with two operands only. This is going to
+to support four basic operations: addition, subtraction, multiplication and
+division, and we will support equations with two operands only. This is going to
 be a small enough project not to distract from showcasing MarkRight, but larger
 than your typical hello world application.
 
-Since this sample is in the same directory as the MarkRight entry-point
-(`index.js`), we'll call the calculator project's entry point `calc.js` instead.
+## Hello, World!
 
 Let's start off easy, create the entry-point file, output some message and check
 that the given message has been output, indeed. (Alright, we _are_ starting with
@@ -47,6 +48,8 @@ last shell fenced code block is actually the content of the `stdout` code block.
 At this point, we can be sure that `cals.js` when run through Node prints the
 `Hello, world!` message to the standard output.
 
+## Let's Reset
+
 Let's clear the file so that we can start working on the calculator logic in it.
 We can do this using a `diff` fenced code block. This code block is used to
 patch the content of the file based on the patch provided in the code block.
@@ -82,6 +85,8 @@ so this syntax has been selected.
 ```js calc.js?
 ```
 
+## Accepting Input
+
 With an empty `calc.js` file, let's get cracking on the calculator logic
 implementation. Let's start by printing command line arguments we receive and
 running the script with some test arguments.
@@ -104,6 +109,8 @@ if (!equation) {
 // Print the equation argument we received
 console.log(equation);
 ```
+
+## Trust, But Verify
 
 Calling this with no arguments:
 
@@ -129,11 +136,13 @@ We see the argument printed back:
 1+1
 ```
 
+## Now You Have Two Problems
+
 Next up, we need to validate the equation format (using a regex) and pull out
 the operands and the operator. Then we can carry out the evaluation and print
 the result.
 
-```js calc.js
+```js calc.js-
 // Instruct on how to pass the equation argument if missing
 if (!equation) {
   console.error('Please provide an equation using a command line argument.');
@@ -150,12 +159,14 @@ if (!/^\d+(\+|-|\*|\/)\d+$/.test(equation)) {
 console.log(equation);
 ```
 
+## Get Them Diamonds
+
 This check works fine, but we can improve it by pulling out the operands and the
 operation while we're doing the format check to kill two birds with one stone:
 
 ```js calc.js-
 // Validate the `equation` argument for operand-operation-operand format
-const match = /^(?<leftOperand>\d+)(?<operator>(\+|-|\*|\/))(?<rightOperand>\d+)$/.test(equation);
+const match = /^(?<leftOperand>\d+)(?<operator>(\+|-|\*|\/))(?<rightOperand>\d+)$/.exec(equation);
 if (!match) {
   console.error('The equation argument does not match the expected format.');
 ```
@@ -167,5 +178,215 @@ print those instead of the `equation` string:
 - // Print the equation argument we received
 - console.log(equation);
 + // Print the equation parts we received
-+ console.log(match.groups);
++ const { leftOperand, operator, rightOperand } = match.groups;
++ console.log({ leftOperand, operator, rightOperand });
 ```
+
+Let's run the script again and see if the extraction of parts worked out:
+
+```sh
+node calc.js 1+1
+```
+
+```stdout
+{ leftOperand: '1', operator: '+', rightOperand: '1' }
+```
+
+Looks like everything is working fine. Next up, let's validate the operands are
+both valid numbers JavaScript can represent.
+
+## Conversion
+
+```js calc.js-
+// Print the equation parts we received
+const leftOperand = Number(match.groups.leftOperand);
+const rightOperand = Number(match.groups.rightOperand);
+if (Number.isNaN(leftOperand) || Number.isNaN(rightOperand)) {
+  console.error(`Either ${match.groups.leftOperand} or ${match.groups.rightOperand} is not a valid JS number.`);
+  process.exit(1);
+}
+
+const { operator } = match.groups;
+console.log({ leftOperand, operator, rightOperand });
+```
+
+Are we still getting what we need? Now the `leftOperand` and `rightOperand`
+variables should be typed as numbers as a bonus:
+
+```sh
+node calc.js 1+1
+```
+
+```stdout
+{ leftOperand: 1, operator: '+', rightOperand: 1 }
+```
+
+## Operate
+
+We do not need to validate the operator, the regex already does it for us, so
+the only thing left now is to implement a `switch` which based on the operator
+prints the resulting value of the equation:
+
+```js calc.js-
+const { operator } = match.groups;
+switch (operator) {
+  case '+': {
+    console.log(leftOperand + rightOperand);
+    break;
+  }
+  case '-': {
+    console.log(leftOperand - rightOperand);
+    break;
+  }
+  case '*': {
+    console.log(leftOperand * rightOperand);
+    break;
+  }
+  case '/': {
+    console.log(leftOperand / rightOperand);
+    break;
+  }
+}
+
+console.log({ leftOperand, operator, rightOperand });
+```
+
+```sh
+node calc.js 1+1
+```
+
+```stdout
+2
+{ leftOperand: 1, operator: '+', rightOperand: 1 }
+```
+
+This looks great. Let's get rid of the debug `console.log` statement and then
+put the final code through its paces.
+
+```patch calc.js
+- console.log({ leftOperand, operator, rightOperand });
+```
+
+## Testing Course
+
+```sh
+node calc.js 10+2
+```
+
+```stdout
+12
+```
+
+```sh
+node calc.js 10-2
+```
+
+```stdout
+8
+```
+
+```sh
+node calc.js 10*2
+```
+
+```stdout
+20
+```
+
+```sh
+node calc.js 10/2
+```
+
+```stdout
+5
+```
+
+Fantastic. Our calculator works now. We'll call it a day soon, but to close off,
+let's implement one more quality of life improvement for our users: let's allow
+them to surround the operator with white-space, should they so desire. E.g.:
+`10 + 2` should be supported, too. We'll need to update the regex for this.
+
+## UX!
+
+```patch calc.js
+- const match = /^(?<leftOperand>\d+)(?<operator>(\+|-|\*|\/))(?<rightOperand>\d+)$/.exec(equation);
++ const match = /^(?<leftOperand>\d+)\s?(?<operator>(\+|-|\*|\/))\s?(?<rightOperand>\d+)$/.exec(equation);
+```
+
+Applying this change, let's ensure the original set of test expressions still
+works:
+
+```sh
+node calc.js 10+2
+```
+
+```stdout
+12
+```
+
+```sh
+node calc.js 10-2
+```
+
+```stdout
+8
+```
+
+```sh
+node calc.js 10*2
+```
+
+```stdout
+20
+```
+
+```sh
+node calc.js 10/2
+```
+
+```stdout
+5
+```
+
+And with spaces:
+
+```sh
+node calc.js "10 + 2"
+```
+
+```stdout
+12
+```
+
+```sh
+node calc.js "10 - 2"
+```
+
+```stdout
+8
+```
+
+```sh
+node calc.js "10 * 2"
+```
+
+```stdout
+20
+```
+
+```sh
+node calc.js "10 / 2"
+```
+
+```stdout
+5
+```
+
+## Conclusion
+
+This is it! Our calculator application is now done, works as expected and what's
+more, we have a precise record of how and why we built it the way we did. The
+application itself is a mere artifact of the process of our building of it.
+
+This document can never go out of sync with what the application does, because
+it _is_ the application for all intents and purposes. And I think that's great!

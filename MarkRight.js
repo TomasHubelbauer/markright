@@ -1,7 +1,6 @@
 import fs from 'fs';
 import util from 'util';
 import child_process from 'child_process';
-import { start } from 'repl';
 
 export default class MarkRight {
   constructor(/** @type {string} */ filePath) {
@@ -52,6 +51,8 @@ export default class MarkRight {
         }
       }
     }
+
+    console.log('Processed', this.filePath);
   }
 
   async file(/** @type {string} */ fileName, /** @type {string} */ text) {
@@ -147,11 +148,12 @@ export default class MarkRight {
       this.exit('Cannot check process stream before running a script!', 1);
     }
 
-    this.compare(this.stdout, text, 'stdout');
     if (this.exitCode !== 0) {
+      console.error(this.stderr);
       this.exit('Exit code is not zero.');
     }
 
+    this.compare(this.stdout, text, 'stdout');
     console.log('Verified stdout match');
   }
 
@@ -165,11 +167,12 @@ export default class MarkRight {
       this.exit('Cannot check process stream before running a script!', 1);
     }
 
-    this.compare(this.stderr, text, 'stderr');
-    if (this.exitCode !== exitCode) {
+    if (code !== undefined && this.exitCode !== exitCode) {
+      console.error(this.stderr);
       this.exit(`Exit code is not ${exitCode}.`);
     }
 
+    this.compare(this.stderr, text, 'stderr');
     console.log('Verified stderr match');
   }
 

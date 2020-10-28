@@ -10,6 +10,16 @@ MarkRight is an work-in-progress literate programming tool.
 
 `markright` (`readme.md`) or `markright document.md`
 
+## Example
+
+For a full example, see the `test` directory, which contains `readme.md` which
+implements a simple Node calculator using JavaScript. To run it, run `markright`
+in the `test` directory or use `npm test` to install MarkRight from the latest
+source globally and then run the latest binary on `test/readme.md`.
+
+Since this document is written in MarkDown, it itself is a valid MarkRight
+document, however it produces no generated content.
+
 ## Purpose
 
 MarkRight works by reading a MarkDown document and interpreting its fenced code
@@ -149,16 +159,6 @@ names of the files being generated:
   (this can be worked around using the alternative inline code run syntax)
 - MarkRight does not support newlines other than `\n` (so, not `\r\n`), we may
   support these in the future, but as of now it has not been a priority
-
-## Example
-
-For a full example, see the `test` directory, which contains `readme.md` which
-implements a simple Node calculator using JavaScript. To run it, run `markright`
-in the `test` directory or use `npm test` to install MarkRight from the latest
-source globally and then run the latest binary on `test/readme.md`.
-
-Since this document is written in MarkDown, it itself is a valid MarkRight
-document, however it produces no generated content.
 
 ## Development
 
