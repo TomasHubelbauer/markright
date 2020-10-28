@@ -1,6 +1,6 @@
 # MarkRight
 
-MarkRight is an upcoming literate programming tool.
+MarkRight is an work-in-progress literate programming tool.
 
 ## Installation
 
