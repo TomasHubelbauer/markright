@@ -57,14 +57,32 @@ export default class MarkRight {
   async edit(/** @type {string} */ fileName, /** @type {string} */ text) {
     // Compare text if the `?` flag tails the file name
     if (fileName.endsWith('?')) {
-      fileName = fileName.slice(0, -1);
+      fileName = fileName.slice(0, -'?'.length);
       this.compare(await fs.promises.readFile(fileName, 'utf-8'), text, 'file');
       console.log('Verified', fileName, 'match');
       return;
     }
 
-    await fs.promises.writeFile(fileName, text);
-    console.log('Written to', fileName);
+    if (fileName.endsWith('+')) {
+      fileName = fileName.slice(0, -'+'.length);
+      await fs.promises.appendFile(fileName, text);
+      console.log('Appended to', fileName);
+      return;
+    }
+
+    try {
+      await fs.promises.access(fileName);
+      await fs.promises.writeFile(fileName, text);
+      console.log('Replaced', fileName);
+    }
+    catch (error) {
+      if (error.code !== 'EEXIST') {
+        throw error;
+      }
+
+      await fs.promises.writeFile(fileName, text);
+      console.log('Created', fileName);
+    }
   }
 
   // TODO: Add support for running in a specific shell (sh, bash, posh, …)

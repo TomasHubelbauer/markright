@@ -153,7 +153,6 @@ console.log(equation);
 This check works fine, but we can improve it by pulling out the operands and the
 operation while we're doing the format check to kill two birds with one stone:
 
-```js calc.js
-console.log(equation);
+```js calc.js+
 // TODO: Finish this
 ```
