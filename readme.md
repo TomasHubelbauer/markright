@@ -26,13 +26,14 @@ This program is maintained and is of a WIP level of quality and support.
 
 ## Example
 
-For a full example, see the `test` directory, which contains `readme.md` which
-implements a simple Node calculator using JavaScript. To run it, run `markright`
-in the `test` directory or use `npm test` to install MarkRight from the latest
-source globally and then run the latest binary on `test/readme.md`.
+See [`test`](test). Its [`readme.md`](test/readme.md) implements a simple Node
+JavaScript CLI calculator into [`calc.js`](test/calc.js).
 
-Since this document is written in MarkDown, it itself is a valid MarkRight
-document, however it produces no generated content.
+To run it, `cd` into it and run `markright` or use `npm test` to use MarkRight
+from source code.
+
+Since this `readme.md` is written in MarkDown, it itself is a valid MarkRight
+document, too, however it produces no generated content.
 
 ## Purpose
 
