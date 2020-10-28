@@ -1,10 +1,10 @@
 # MarkRight
 
-![![](https://img.shields.io/github/stars/tomashubelbauer/markright)](https://img.shields.io/github/stars/tomashubelbauer/markright)
-![![](https://img.shields.io/github/issues/TomasHubelbauer/markright)](https://img.shields.io/github/issues/tomashubelbauer/markright)
-![![](https://img.shields.io/github/forks/TomasHubelbauer/markright)](https://img.shields.io/github/forks/tomashubelbauer/markright)
-![![](https://img.shields.io/github/license/tomashubelbauer/markright)](license.md)
-![![](https://img.shields.io/badge/sponsor-@tomashubelbauer-orange)](https://github.com/sponsors/tomashubelbauer)
+[![](https://img.shields.io/github/stars/tomashubelbauer/markright)](https://img.shields.io/github/stars/tomashubelbauer/markright)
+[![](https://img.shields.io/github/issues/TomasHubelbauer/markright)](https://img.shields.io/github/issues/tomashubelbauer/markright)
+[![](https://img.shields.io/github/forks/TomasHubelbauer/markright)](https://img.shields.io/github/forks/tomashubelbauer/markright)
+[![](https://img.shields.io/github/license/tomashubelbauer/markright)](license.md)
+[![](https://img.shields.io/badge/sponsor-@tomashubelbauer-orange)](https://github.com/sponsors/tomashubelbauer)
 
 MarkRight is a literate programming tool.
 
