@@ -71,7 +71,7 @@ is used to determine what syntax highlighter to use.
 
 Now we can be sure the file is empty. We can assert this, too, like with the
 stdout content. For that we use yet another variant of info text content:
-`js calc.js ?`. The question mark here tells MarkRight to not replace the text
+`js calc.js?`. The question mark here tells MarkRight to not replace the text
 of `calc.js` with the text of the code block, but instead compare the two. If we
 left it out, it would just replace `calc.js` with the same content it alredy
 has, making no check. This typo would not be catastrophic, we would indeed lose
@@ -79,7 +79,7 @@ the information about the file not having the expected content, which would be
 suboptimal, but we would ensure that it has the expected content coming forward,
 so this syntax has been selected.
 
-```js calc.js ?
+```js calc.js?
 ```
 
 With an empty `calc.js` file, let's get cracking on the calculator logic
@@ -113,7 +113,7 @@ node calc.js
 
 We get the expected error:
 
-```stderr
+```stderr 1
 Please provide an equation using a command line argument.
 ```
 

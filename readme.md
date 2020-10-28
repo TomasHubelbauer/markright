@@ -37,10 +37,10 @@ are not too pressing, as MarkRight should be useful even before these are solved
 
 ## Example
 
-Since this document is named `readme.md`, it itself is a valid MarkRight
+Since this document is written in MarkDown, it itself is a valid MarkRight
 document. It continues on to show case all the various featutes and elaborates
 on the syntax that enables them. We also have a more focused sample document in
-[`sample.md`](sample.md). Run it by running `npm start`.
+[`sample.md`](sample.md). Run it by running `npm test`.
 
 Up until this point, `readme.md` produces no output. To create a file, do this:
 
