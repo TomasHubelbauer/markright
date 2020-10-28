@@ -59,7 +59,7 @@ export default class MarkRight {
     if (fileName.endsWith('?')) {
       fileName = fileName.slice(0, -1);
       this.compare(await fs.promises.readFile(fileName, 'utf-8'), text, 'file');
-      console.log('Verified', fileName, 'text match');
+      console.log('Verified', fileName, 'match');
       return;
     }
 
