@@ -266,18 +266,9 @@ export default class MarkRight {
     return endCandidate;
   }
 
-  // TODO: Do a more general update (supporting a mix of +, - and unchanged lines)
+  // TODO: Support mixed + and - lines and unchanged lines
   async apply(/** @type {string} */ fileName, /** @type {string} */ changes) {
     const text = await fs.promises.readFile(fileName, 'utf-8');
-
-    // Detect and apply file content truncation (clear file)
-    if (changes === '- ' + text) {
-      await fs.promises.truncate(fileName);
-      console.log('Truncated', fileName);
-      return;
-    }
-
-    // Detect and apply replacing a set of consecutive lines with another
     const fileLines = text.split('\n');
     const textLines = changes.split('\n');
     textLines.pop();
