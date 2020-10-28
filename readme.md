@@ -1,6 +1,10 @@
 # MarkRight
 
-MarkRight is an work-in-progress literate programming tool.
+MarkRight is a literate programming tool.
+
+## Status
+
+This program is maintained and is of a WIP level of quality and support.
 
 ## Installation
 
