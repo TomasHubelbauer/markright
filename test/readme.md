@@ -132,3 +132,28 @@ We see the argument printed back:
 Next up, we need to validate the equation format (using a regex) and pull out
 the operands and the operator. Then we can carry out the evaluation and print
 the result.
+
+```js calc.js
+// Instruct on how to pass the equation argument if missing
+if (!equation) {
+  console.error('Please provide an equation using a command line argument.');
+  process.exit(1);
+}
+
+// Validate the `equation` argument for operand-operation-operand format
+if (!/^\d+(\+|-|\*|\/)\d+$/.test(equation)) {
+  console.error('The equation argument does not match the expected format.');
+  process.exit(1);
+}
+
+// Print the equation argument we received
+console.log(equation);
+```
+
+This check works fine, but we can improve it by pulling out the operands and the
+operation while we're doing the format check to kill two birds with one stone:
+
+```js calc.js
+console.log(equation);
+// TODO: Finish this
+```

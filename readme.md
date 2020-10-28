@@ -147,6 +147,35 @@ So that I can have the sample document in a subdirectory and run it easily
 using just the global argument name. Then the sample MarkDown file can be called
 `readme.md` as well.
 
-### Run on watch
+### Add a `watch` script to `package.json`
 
-Use Nodemon or `fs.watch`.
+Use globally installed Nodemon for it.
+
+### Think about VS Code Intellisense support
+
+This one is going to be very tricky… For each code block, we need to determine
+the full content of the file it relates to (because it might be a patch block)
+and use that code to fuel the Intellisense for the given language.
+
+Remains to be seen if this is going to even be possible using the VS Code API.
+
+It might also be necessary to either store the texts in temporary files or use
+the generated files and only "translate" the cursor in the code block to the
+backing content in the generated file so that things like modules work (VS Code
+knows what to suggest for module paths etc.).
+
+### Implement patch blocks which work by providing leading and trailing lines
+
+Patching using `patch` and `diff` code blocks is good for deleting stuff, but it
+would be cumbersome to use it for updates which are mostly or fully additions.
+For such updates, I'm thinking of making MarkRight see if the first and last
+line(s) of the given patch block text are already present in the file and follow
+each other and from that determine the position at which the remaining text of
+the patch block text is to be inserted in the file.
+
+### Consider special-casing `_` as a file name for the last file
+
+This way it remains possible to distinguish which code blocks are for display
+only and which are for updates without repeating the file name ad-nauseam.
+
+### Add support for CRLF or document only supporting CR somewhere

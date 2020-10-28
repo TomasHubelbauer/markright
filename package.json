@@ -1,6 +1,11 @@
 {
+  "name": "markright",
+  "bin": {
+    "markright": "index.js"
+  },
   "type": "module",
   "scripts": {
-    "test": "node test"
+    "pretest": "npm link --force",
+    "test": "cd test && markright"
   }
 }
