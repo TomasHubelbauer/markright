@@ -131,6 +131,27 @@ to reference external assets being pulled into the project, but these problems
 are not too pressing, as MarkRight should be useful even before these are solved
 (if they ever are).
 
+## Limitations
+
+MarkRight places several limitations on the MarkDown being used as well as the
+names of the files being generated:
+
+- MarkRight syntax might conflict with info text not inteded for MarkRight
+
+  This is extremely unlikely due to the specific MarkRight syntax but possible.
+
+- MarkRight reserves `?` and `+` and the end of file names for special actions
+
+  These symbols are used to indicate file content check and file content append,
+  but on some systems these symbols might be valid file name symbols and MR will
+  not allow placing them into the file name.
+
+- MarkRight can not output `` ` `` into a file name as backticks are disallowed
+  in MarkDown fenced code block info text
+
+- MarkRight does not support newlines other than `\n` (so, not `\r\n`), we may
+  support these in the future, but as of now it has not been a priority
+
 ## Example
 
 For a full example, see the `test` directory, which contains `readme.md` which
