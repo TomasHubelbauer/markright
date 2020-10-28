@@ -141,12 +141,6 @@ very end) and run only the part that has changed.
 
 ### Address code to-do comments
 
-### Add as a global command using `npm link` or something
-
-So that I can have the sample document in a subdirectory and run it easily
-using just the global argument name. Then the sample MarkDown file can be called
-`readme.md` as well.
-
 ### Add a `watch` script to `package.json`
 
 Use globally installed Nodemon for it.
