@@ -53,7 +53,6 @@ export default class MarkRight {
     }
   }
 
-  // TODO: Determine whether to create or append to a file
   async edit(/** @type {string} */ fileName, /** @type {string} */ text) {
     // Compare text if the `?` flag tails the file name
     if (fileName.endsWith('?')) {
