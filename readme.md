@@ -288,3 +288,5 @@ be sufficiently small that it won't be a problem in practice.
 We might even be able to get away with merging `+` marker with these too, by
 defaulting to appending where to placement has been determined by contextual
 lines and the changes are not a patch.
+
+### Fix fenced code block wrapped in `~~~` being matched and processed
