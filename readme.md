@@ -32,11 +32,11 @@ regenerated the next time MarkRight is run.
 ## Inspiration
 
 MarkRight is inspired by notebooks, specifically lab notebooks, but also the
-computer science notebooks as we know today.
+computer science notebooks we know today.
 
 ## Features
 
-MarkRight is capable of recognizing several pattern of fenced code block info
+MarkRight is capable of recognizing several patterns of fenced code block info
 texts in a MarkDown file. These patterns allow you to instruct MarkRight to run
 actions which enable building up files and executing scripts as per the document
 resulting in literal programming experience where just by describing the program
@@ -79,7 +79,7 @@ appending at the end of a file.
 ### Insert into a file
 
 ~~~
-```txt name.txt~
+```txt name.txt-
 content
 inserted content
 more content
@@ -146,6 +146,7 @@ names of the files being generated:
   - Some operating systems allows some of these symbols in file names bur MR not
 - MarkRight can not output `` ` `` and `~` into a file name using the info text
   as these symbols are disallowed in MarkDown fenced code block info text
+  (this can be worked around using the alternative inline code run syntax)
 - MarkRight does not support newlines other than `\n` (so, not `\r\n`), we may
   support these in the future, but as of now it has not been a priority
 
@@ -166,18 +167,17 @@ it by running `npm test` which places MarkRight into the global scope by doing
 `npm link` and then runs this fresh binary in `test`. MarkRight defaults to
 `readme.md` if no file name is given, so `test/readme.md` will be run.
 
+You can use `npm run watch` which uses Nodemon to watch MarkRight source code
+and MarkDown files.
+
 ## To-Do
+
+### Address code to-do comments
 
 ### Cache the unchanged layers
 
 Do not run the whole document each time, recognize the changed part (usually the
 very end) and run only the part that has changed.
-
-### Address code to-do comments
-
-### Add a `watch` script to `package.json`
-
-Use globally installed Nodemon for it.
 
 ### Think about VS Code Intellisense support
 

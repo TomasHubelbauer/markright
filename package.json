@@ -2,12 +2,10 @@
   "name": "markright",
   "license": "AGPL-3.0-only",
   "repository": "tomashubelbauer/markright",
-  "bin": {
-    "markright": "index.js"
-  },
+  "bin": "index.js",
   "type": "module",
   "scripts": {
-    "pretest": "npm link --force",
-    "test": "cd test && markright"
+    "test": "npm unlink && npm link && cd test && markright",
+    "watch": "npx nodemon --ext js,json,md --ignore test/calc.js --exec npm test"
   }
 }
