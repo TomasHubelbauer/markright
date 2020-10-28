@@ -56,7 +56,7 @@ patch the content of the file based on the patch provided in the code block.
 We want to clear the file, so we'll provide a patch which removes all of its
 content:
 
-```patch calc.js
+```patch _
 - console.log('Hello, world!')
 ```
 
@@ -72,17 +72,22 @@ of the MarkDown document (as the info text is never rendered), and it won't even
 break the syntax highlight for `patch` as only the first word of the info text
 is used to determine what syntax highlighter to use.
 
+Oh, and by the way, we can replace `calc.js` with `_` anywhere where a file name
+is accepted and it will resolve to the last file name. On top of this, if a MR
+suffix would follow the file name we used the underscore for instead, we can use
+only the suffix and the last file name will be restored.
+
 Now we can be sure the file is empty. We can assert this, too, like with the
 stdout content. For that we use yet another variant of info text content:
-`js calc.js?`. The question mark here tells MarkRight to not replace the text
-of `calc.js` with the text of the code block, but instead compare the two. If we
-left it out, it would just replace `calc.js` with the same content it alredy
+`js ?`. The question mark here tells MarkRight to not replace the text of the
+`calc.js` file with the text of the code block, but instead compare the two. If
+we left it out, it would just replace `calc.js` with the same content it alredy
 has, making no check. This typo would not be catastrophic, we would indeed lose
 the information about the file not having the expected content, which would be
 suboptimal, but we would ensure that it has the expected content coming forward,
 so this syntax has been selected.
 
-```js calc.js?
+```js ?
 ```
 
 ## Accepting Input
@@ -91,7 +96,7 @@ With an empty `calc.js` file, let's get cracking on the calculator logic
 implementation. Let's start by printing command line arguments we receive and
 running the script with some test arguments.
 
-```js calc.js
+```js _
 // Pull out the equation argument
 const [ , , equation, ...rest ] = process.argv;
 
@@ -143,7 +148,7 @@ Next up, we need to validate the equation format (using a regex) and pull out
 the operands and the operator. Then we can carry out the evaluation and print
 the result.
 
-```js calc.js-
+```js -
 // Instruct on how to pass the equation argument if missing
 if (!equation) {
   console.error('Please provide an equation using a command line argument.');
@@ -165,7 +170,7 @@ console.log(equation);
 This check works fine, but we can improve it by pulling out the operands and the
 operation while we're doing the format check to kill two birds with one stone:
 
-```js calc.js-
+```js -
 // Validate the `equation` argument for operand-operation-operand format
 const match = /^(?<leftOperand>\d+)(?<operator>(\+|-|\*|\/))(?<rightOperand>\d+)$/.exec(equation);
 if (!match) {
@@ -175,7 +180,7 @@ if (!match) {
 The `match.groups` object will contain the operands and the operator now. We can
 print those instead of the `equation` string:
 
-```patch calc.js
+```patch _
 - // Print the equation argument we received
 - console.log(equation);
 + // Print the equation parts we received
@@ -198,7 +203,7 @@ both valid numbers JavaScript can represent.
 
 ## Conversion
 
-```js calc.js-
+```js -
 // Print the equation parts we received
 const leftOperand = Number(match.groups.leftOperand);
 const rightOperand = Number(match.groups.rightOperand);
@@ -228,7 +233,7 @@ We do not need to validate the operator, the regex already does it for us, so
 the only thing left now is to implement a `switch` which based on the operator
 prints the resulting value of the equation:
 
-```js calc.js-
+```js -
 const { operator } = match.groups;
 switch (operator) {
   case '+': {
@@ -264,7 +269,7 @@ node calc.js 1+1
 This looks great. Let's get rid of the debug `console.log` statement and then
 put the final code through its paces.
 
-```patch calc.js
+```patch _
 - console.log({ leftOperand, operator, rightOperand });
 ```
 
@@ -309,7 +314,7 @@ them to surround the operator with white-space, should they so desire. E.g.:
 
 ## UX!
 
-```patch calc.js
+```patch _
 - const match = /^(?<leftOperand>\d+)(?<operator>(\+|-|\*|\/))(?<rightOperand>\d+)$/.exec(equation);
 + const match = /^(?<leftOperand>\d+)\s?(?<operator>(\+|-|\*|\/))\s?(?<rightOperand>\d+)$/.exec(equation);
 ```

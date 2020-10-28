@@ -134,6 +134,18 @@ more content
 
 This will verify that the given file has given content.
 
+### File name tracking
+
+Everywhere where a file name is accepted, `_` can be passed in. It will resolve
+to the last file name used, making the difference between editing a single file
+in multiple steps and jumping between various files more pronounced so that the
+difference is easy to spot. Also, changing file names does not require multiple
+edits this way.
+
+On top of this, if they file name has a MarkRight directive suffix (?, +, -, ±),
+you can leave out even the underscore and just use the directive standalone. MR
+will know to restore the last known file name in this case, too.
+
 ## Considerations
 
 There are unsolved problems, such as the exact syntax of the code blocks or how
@@ -152,6 +164,7 @@ names of the files being generated:
   - `?` indicates the file text should be checked against the excepcted text
   - `+` indicates the code block text is to be appended not to replace the file
   - `-` indicates the code block text is to be interpolated not to replace file
+  - `±` indicates the code block text is a patch to be appled to the file text
   - `_` is a placeholder for the last file name and cannot be used as file name
   - Some operating systems allows some of these symbols in file names bur MR not
 - MarkRight can not output `` ` `` and `~` into a file name using the info text
@@ -191,11 +204,6 @@ It might also be necessary to either store the texts in temporary files or use
 the generated files and only "translate" the cursor in the code block to the
 backing content in the generated file so that things like modules work (VS Code
 knows what to suggest for module paths etc.).
-
-### Consider special-casing `_` as a file name for the last file
-
-This way it remains possible to distinguish which code blocks are for display
-only and which are for updates without repeating the file name ad-nauseam.
 
 ### Consider adding support for `~~~` to be able to output MarkDown code blocks
 
@@ -274,3 +282,19 @@ node calc.js "10 / 2"
 ~~~
 
 But instead, the `stdout` check returns only `12\n`.
+
+### Consider consolidating `-` and `±` markers into just `±` (and maybe `+` too)
+
+Right now `-` and `±` work differently so two symbols are used, but we could try
+and differentiate based on the patch text. If it is a contextual patch where
+either leading or trailing (or both) lines are used to determine the patch
+placement within the file, there won't be any lines starting with `+` or `-`. If
+there are any, it most likely means this is a regular patch. For now we do not
+support unchanged lines in patches, so for now we could have 100 % confidence by
+checking if all lines are either `+` or `-` lines. Later if we decide to support
+unchanged lines in patches, there will be room for false positives, but it may
+be sufficiently small that it won't be a problem in practice.
+
+We might even be able to get away with merging `+` marker with these too, by
+defaulting to appending where to placement has been determined by contextual
+lines and the changes are not a patch.
