@@ -192,15 +192,6 @@ the generated files and only "translate" the cursor in the code block to the
 backing content in the generated file so that things like modules work (VS Code
 knows what to suggest for module paths etc.).
 
-### Implement patch blocks which work by providing leading and trailing lines
-
-Patching using `patch` and `diff` code blocks is good for deleting stuff, but it
-would be cumbersome to use it for updates which are mostly or fully additions.
-For such updates, I'm thinking of making MarkRight see if the first and last
-line(s) of the given patch block text are already present in the file and follow
-each other and from that determine the position at which the remaining text of
-the patch block text is to be inserted in the file.
-
 ### Consider special-casing `_` as a file name for the last file
 
 This way it remains possible to distinguish which code blocks are for display

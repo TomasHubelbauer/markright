@@ -1,6 +1,7 @@
 import fs from 'fs';
 import util from 'util';
 import child_process from 'child_process';
+import { start } from 'repl';
 
 export default class MarkRight {
   constructor(/** @type {string} */ filePath) {
@@ -33,12 +34,12 @@ export default class MarkRight {
           this.exit(`No arguments must be used in info text in edit mode.`);
         }
 
-        await this.edit(fileName, codeText);
+        await this.file(fileName, codeText);
       }
 
       // Execute the code block if there is a language and argument in info text
       else if (language) {
-        const handler = this['exec_' + language];
+        const handler = this['run_' + language];
 
         // Handle language specific processing (shell scripts, stream comparison)
         if (handler) {
@@ -47,50 +48,138 @@ export default class MarkRight {
 
         // Edit (create/update) or compare based on a file name in argument
         else if (argument) {
-          await this.edit(argument, codeText);
+          await this.file(argument, codeText);
         }
       }
     }
   }
 
-  async edit(/** @type {string} */ fileName, /** @type {string} */ text) {
-    // Compare text if the `?` flag tails the file name
+  async file(/** @type {string} */ fileName, /** @type {string} */ text) {
     if (fileName.endsWith('?')) {
-      fileName = fileName.slice(0, -'?'.length);
-      this.compare(await fs.promises.readFile(fileName, 'utf-8'), text, 'file');
-      console.log('Verified', fileName, 'match');
-      return;
+      return this.file_compare(fileName.slice(0, -'?'.length), text);
     }
 
     if (fileName.endsWith('+')) {
-      fileName = fileName.slice(0, -'+'.length);
-      await fs.promises.appendFile(fileName, text);
-      console.log('Appended to', fileName);
-      return;
+      return this.file_append(fileName.slice(0, -'+'.length), text);
     }
 
     if (fileName.endsWith('-')) {
-      fileName = fileName.slice(0, -'+'.length);
-      this.exit('Inserting into a file using contextual lines is not implemented yet');
+      return this.file_insert(fileName.slice(0, -'-'.length), text);
     }
 
     try {
       await fs.promises.access(fileName);
-      await fs.promises.writeFile(fileName, text);
-      console.log('Replaced', fileName);
+      return this.file_replace(fileName, text);
     }
     catch (error) {
       if (error.code !== 'EEXIST') {
         throw error;
       }
 
-      await fs.promises.writeFile(fileName, text);
-      console.log('Created', fileName);
+      return this.file_create(fileName, text);
     }
   }
 
+  async file_compare(/** @type {string} */ fileName, /** @type {string} */ text) {
+    this.compare(await fs.promises.readFile(fileName, 'utf-8'), text, 'file');
+    console.log('Verified', fileName, 'match');
+  }
+
+  async file_append(/** @type {string} */ fileName, /** @type {string} */ text) {
+    await fs.promises.appendFile(fileName, text);
+    console.log('Appended to', fileName);
+  }
+
+  async file_insert(/** @type {string} */ fileName, /** @type {string} */ text) {
+    const fileText = await fs.promises.readFile(fileName, 'utf-8');
+    const fileLines = fileText.split('\n');
+    const textLines = text.split('\n');
+
+    // Remove the empty line at the end
+    textLines.pop();
+
+    // Find all start candidates
+    const startCandidates = [];
+    for (let fileIndex = 0; fileIndex < fileLines.length; fileIndex++) {
+      const candidate = { index: fileIndex, length: 0 };
+      for (let textIndex = 0; textIndex < textLines.length; textIndex++) {
+        const fileLine = fileLines[fileIndex + textIndex];
+        const textLine = textLines[textIndex];
+        if (textLine === fileLine) {
+          candidate.length++;
+        }
+        else {
+          break;
+        }
+      }
+
+      if (candidate.length > 0) {
+        startCandidates.push(candidate);
+      }
+    }
+
+    // TODO: Treat this as prepending to the file instead of failing
+    if (startCandidates.length === 0) {
+      this.exit('No start candidates found');
+    }
+
+    // TODO: Select the last start candidate instead to ensure no conflict within
+    if (startCandidates.length > 1) {
+      this.exit('Multiple start candidates found.');
+    }
+
+    const [startCandidate] = startCandidates;
+
+    // Find all end candidates
+    const endCandidates = [];
+    for (let fileIndex = fileLines.length - 1; fileIndex > 0; fileIndex--) {
+      const candidate = { index: fileIndex, length: 0 };
+      for (let textIndex = textLines.length - 1; textIndex > 0; textIndex--) {
+        const fileLine = fileLines[fileIndex - (textLines.length - textIndex)];
+        const textLine = textLines[textIndex];
+        if (textLine === fileLine) {
+          candidate.length++;
+        }
+        else {
+          break;
+        }
+      }
+
+      if (candidate.length > 0) {
+        endCandidates.push(candidate);
+      }
+    }
+
+    // TODO: Treat this as appending to the file instead of failing
+    if (endCandidates.length === 0) {
+      this.exit('No end candidates found');
+    }
+
+    // TODO: Select the first start candidate instead to ensure no conflict within
+    if (endCandidates.length > 1) {
+      this.exit('Multiple end candidates found.');
+    }
+
+    const [endCandidate] = endCandidates;
+
+    // Replace the identified portion
+    fileLines.splice(startCandidate.index, endCandidate.index - startCandidate.index, ...textLines);
+    await fs.promises.writeFile(fileName, fileLines.join('\n'));
+    console.log('Inserted into', fileName);
+  }
+
+  async file_create(/** @type {string} */ fileName, /** @type {string} */ text) {
+    await fs.promises.writeFile(fileName, text);
+    console.log('Created', fileName);
+  }
+
+  async file_replace(/** @type {string} */ fileName, /** @type {string} */ text) {
+    await fs.promises.writeFile(fileName, text);
+    console.log('Replaced', fileName);
+  }
+
   // TODO: Add support for running in a specific shell (sh, bash, posh, …)
-  async exec_sh(/** @type {string} */ _, /** @type {string} */ text) {
+  async run_sh(/** @type {string} */ _, /** @type {string} */ text) {
     if (_) {
       this.exit('Shell script can have no argument.');
     }
@@ -110,7 +199,7 @@ export default class MarkRight {
     console.log('Executed shell script');
   }
 
-  async exec_stdout(/** @type {string} */ _, /** @type {string} */ text) {
+  async run_stdout(/** @type {string} */ _, /** @type {string} */ text) {
     if (_) {
       this.exit('Stdout check can have no argument.');
     }
@@ -127,7 +216,7 @@ export default class MarkRight {
     console.log('Verified stdout match');
   }
 
-  async exec_stderr(/** @type {string} */ code, /** @type {string} */ text) {
+  async run_stderr(/** @type {string} */ code, /** @type {string} */ text) {
     const exitCode = code === undefined ? undefined : Number(code);
     if (Number.isNaN(exitCode)) {
       this.exit('Stderr check argument must be a number if present.');
@@ -147,7 +236,7 @@ export default class MarkRight {
 
   // TODO: Do a more general update (supporting + and - lines, maybe more)
   // TODO: Pull this out and alias to both `diff` and `patch`
-  async exec_patch(/** @type {string} */ fileName, /** @type {string} */ text) {
+  async run_patch(/** @type {string} */ fileName, /** @type {string} */ text) {
     try {
       await fs.promises.access(fileName);
     }

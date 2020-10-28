@@ -5,7 +5,8 @@ if (!equation) {
 }
 
 // Validate the `equation` argument for operand-operation-operand format
-if (!/^\d+(\+|-|\*|\/)\d+$/.test(equation)) {
+const match = /^(?<leftOperand>\d+)(?<operator>(\+|-|\*|\/))(?<rightOperand>\d+)$/.test(equation);
+if (!match) {
   console.error('The equation argument does not match the expected format.');
   process.exit(1);
 }
