@@ -11,5 +11,5 @@ if (!match) {
   process.exit(1);
 }
 
-// Print the equation argument we received
-console.log(equation);
+// Print the equation parts we received
+console.log(match.groups);

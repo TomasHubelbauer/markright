@@ -98,69 +98,8 @@ export default class MarkRight {
     // Remove the empty line at the end
     textLines.pop();
 
-    // Find all start candidates
-    const startCandidates = [];
-    for (let fileIndex = 0; fileIndex < fileLines.length; fileIndex++) {
-      const candidate = { index: fileIndex, length: 0 };
-      for (let textIndex = 0; textIndex < textLines.length; textIndex++) {
-        const fileLine = fileLines[fileIndex + textIndex];
-        const textLine = textLines[textIndex];
-        if (textLine === fileLine) {
-          candidate.length++;
-        }
-        else {
-          break;
-        }
-      }
-
-      if (candidate.length > 0) {
-        startCandidates.push(candidate);
-      }
-    }
-
-    // TODO: Treat this as prepending to the file instead of failing
-    if (startCandidates.length === 0) {
-      this.exit('No start candidates found');
-    }
-
-    // TODO: Select the last start candidate instead to ensure no conflict within
-    if (startCandidates.length > 1) {
-      this.exit('Multiple start candidates found.');
-    }
-
-    const [startCandidate] = startCandidates;
-
-    // Find all end candidates
-    const endCandidates = [];
-    for (let fileIndex = fileLines.length - 1; fileIndex > 0; fileIndex--) {
-      const candidate = { index: fileIndex, length: 0 };
-      for (let textIndex = textLines.length - 1; textIndex > 0; textIndex--) {
-        const fileLine = fileLines[fileIndex - (textLines.length - textIndex)];
-        const textLine = textLines[textIndex];
-        if (textLine === fileLine) {
-          candidate.length++;
-        }
-        else {
-          break;
-        }
-      }
-
-      if (candidate.length > 0) {
-        endCandidates.push(candidate);
-      }
-    }
-
-    // TODO: Treat this as appending to the file instead of failing
-    if (endCandidates.length === 0) {
-      this.exit('No end candidates found');
-    }
-
-    // TODO: Select the first start candidate instead to ensure no conflict within
-    if (endCandidates.length > 1) {
-      this.exit('Multiple end candidates found.');
-    }
-
-    const [endCandidate] = endCandidates;
+    const startCandidate = this.findStart(fileLines, textLines);
+    const endCandidate = this.findEnd(fileLines, textLines);
 
     // Replace the identified portion
     fileLines.splice(startCandidate.index, endCandidate.index - startCandidate.index, ...textLines);
@@ -234,8 +173,6 @@ export default class MarkRight {
     console.log('Verified stderr match');
   }
 
-  // TODO: Do a more general update (supporting + and - lines, maybe more)
-  // TODO: Pull this out and alias to both `diff` and `patch`
   async run_patch(/** @type {string} */ fileName, /** @type {string} */ text) {
     try {
       await fs.promises.access(fileName);
@@ -244,12 +181,134 @@ export default class MarkRight {
       this.exit('Patch argument must be an existing file name.');
     }
 
-    if (text !== '- ' + await fs.promises.readFile(fileName, 'utf-8')) {
-      this.exit('Only file clear (truncate) patch is supported at the moment.');
+    await this.apply(fileName, text);
+  }
+
+  async run_diff(/** @type {string} */ fileName, /** @type {string} */ text) {
+    try {
+      await fs.promises.access(fileName);
+    }
+    catch (error) {
+      this.exit('Patch argument must be an existing file name.');
     }
 
-    await fs.promises.truncate(fileName);
-    console.log('Truncated', fileName);
+    await this.apply(fileName, text);
+  }
+
+  findStart(/** @type {string[]} */ fileLines, /** @type {string[]} */ textLines) {
+    const startCandidates = [];
+    for (let fileIndex = 0; fileIndex < fileLines.length; fileIndex++) {
+      const candidate = { index: fileIndex, length: 0 };
+      for (let textIndex = 0; textIndex < textLines.length; textIndex++) {
+        const fileLine = fileLines[fileIndex + textIndex];
+        const textLine = textLines[textIndex];
+        if (textLine === fileLine) {
+          candidate.length++;
+        }
+        else {
+          break;
+        }
+      }
+
+      if (candidate.length > 0) {
+        startCandidates.push(candidate);
+      }
+    }
+
+    // TODO: Treat this as prepending to the file instead of failing
+    if (startCandidates.length === 0) {
+      this.exit('No start candidates found');
+    }
+
+    // TODO: Select the last start candidate instead to ensure no conflict within
+    if (startCandidates.length > 1) {
+      this.exit('Multiple start candidates found.');
+    }
+
+    const [startCandidate] = startCandidates;
+    return startCandidate;
+  }
+
+  findEnd(/** @type {string[]} */ fileLines, /** @type {string[]} */ textLines) {
+    const endCandidates = [];
+    for (let fileIndex = fileLines.length - 1; fileIndex > 0; fileIndex--) {
+      const candidate = { index: fileIndex, length: 0 };
+      for (let textIndex = textLines.length - 1; textIndex > 0; textIndex--) {
+        const fileLine = fileLines[fileIndex - (textLines.length - textIndex)];
+        const textLine = textLines[textIndex];
+        if (textLine === fileLine) {
+          candidate.length++;
+        }
+        else {
+          break;
+        }
+      }
+
+      if (candidate.length > 0) {
+        endCandidates.push(candidate);
+      }
+    }
+
+    // TODO: Treat this as appending to the file instead of failing
+    if (endCandidates.length === 0) {
+      this.exit('No end candidates found');
+    }
+
+    // TODO: Select the first start candidate instead to ensure no conflict within
+    if (endCandidates.length > 1) {
+      this.exit('Multiple end candidates found.');
+    }
+
+    const [endCandidate] = endCandidates;
+    return endCandidate;
+  }
+
+  // TODO: Do a more general update (supporting a mix of +, - and unchanged lines)
+  async apply(/** @type {string} */ fileName, /** @type {string} */ changes) {
+    const text = await fs.promises.readFile(fileName, 'utf-8');
+
+    // Detect and apply file content truncation (clear file)
+    if (changes === '- ' + text) {
+      await fs.promises.truncate(fileName);
+      console.log('Truncated', fileName);
+      return;
+    }
+
+    // Detect and apply replacing a set of consecutive lines with another
+    const fileLines = text.split('\n');
+    const textLines = changes.split('\n');
+    textLines.pop();
+
+    const deletionLines = [];
+    for (let index = 0; index < textLines.length; index++) {
+      const line = textLines[index];
+      if (line.startsWith('- ')) {
+        deletionLines.push(line.slice('- '.length));
+      }
+      else {
+        break;
+      }
+    }
+
+    const additionLines = [];
+    for (let index = textLines.length - 1; index > 0; index--) {
+      const line = textLines[index];
+      if (line.startsWith('+ ')) {
+        additionLines.unshift(line.slice('+ '.length));
+      }
+      else {
+        break;
+      }
+    }
+
+    if (deletionLines.length + additionLines.length !== textLines.length) {
+      this.exit('The changes are not a set of removals followed by a set of additions.');
+    }
+
+    const positionCandidate = this.findStart(fileLines, deletionLines);
+    fileLines.splice(positionCandidate.index, positionCandidate.length, ...additionLines);
+    await fs.promises.writeFile(fileName, fileLines.join('\n'));
+    console.log('Patched', fileName);
   }
 
   exit(/** @type {string} */ message, /** @type {number} */ code = 1) {
