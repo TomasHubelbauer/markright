@@ -69,6 +69,11 @@ export default class MarkRight {
       return;
     }
 
+    if (fileName.endsWith('-')) {
+      fileName = fileName.slice(0, -'+'.length);
+      this.exit('Inserting into a file using contextual lines is not implemented yet');
+    }
+
     try {
       await fs.promises.access(fileName);
       await fs.promises.writeFile(fileName, text);

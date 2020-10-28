@@ -138,13 +138,14 @@ names of the files being generated:
 
 - MarkRight syntax might conflict with info text not inteded for MarkRight
   (this is extremely unlikely due to the specific MarkRight syntax but possible)
-- MarkRight reserves `?` and `+` and the end of file names for special actions
+- MarkRight reserves some symbols at the end of file names for special actions
   - `?` indicates the file text should be checked against the excepcted text
   - `+` indicates the code block text is to be appended not to replace the file
-  - `~` indicates the code block text is to be interpolated not to replace file
+  - `-` indicates the code block text is to be interpolated not to replace file
+  - `_` is a placeholder for the last file name and cannot be used as file name
   - Some operating systems allows some of these symbols in file names bur MR not
-- MarkRight can not output `` ` `` into a file name as backticks are disallowed
-  in MarkDown fenced code block info text
+- MarkRight can not output `` ` `` and `~` into a file name using the info text
+  as these symbols are disallowed in MarkDown fenced code block info text
 - MarkRight does not support newlines other than `\n` (so, not `\r\n`), we may
   support these in the future, but as of now it has not been a priority
 

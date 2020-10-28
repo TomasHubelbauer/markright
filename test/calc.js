@@ -12,4 +12,3 @@ if (!/^\d+(\+|-|\*|\/)\d+$/.test(equation)) {
 
 // Print the equation argument we received
 console.log(equation);
-// TODO: Finish this

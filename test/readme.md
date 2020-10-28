@@ -153,7 +153,7 @@ console.log(equation);
 This check works fine, but we can improve it by pulling out the operands and the
 operation while we're doing the format check to kill two birds with one stone:
 
-```js calc.js
+```js calc.js-
 // Validate the `equation` argument for operand-operation-operand format
 const match = /^(?<leftOperand>\d+)(?<operator>(\+|-|\*|\/))(?<rightOperand>\d+)$/.test(equation);
 if (!match) {
