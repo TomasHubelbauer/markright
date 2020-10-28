@@ -188,6 +188,11 @@ export default class MarkRight {
       this.exit('Shell script can have no argument.');
     }
 
+    // TODO: See if writing this to a temp file and executing it will solve this
+    if (text.trim().includes('\n')) {
+      this.exit('Multi-line shell scripts are not supported yet. Consider `&&`.');
+    }
+
     try {
       const process = await util.promisify(child_process.exec)(text);
       this.stdout = process.stdout;

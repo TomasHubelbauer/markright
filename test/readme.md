@@ -276,34 +276,13 @@ put the final code through its paces.
 ## Testing Course
 
 ```sh
-node calc.js 10+2
+node calc.js 10+2 && node calc.js 10-2 && node calc.js 10*2 && node calc.js 10/2
 ```
 
 ```stdout
 12
-```
-
-```sh
-node calc.js 10-2
-```
-
-```stdout
 8
-```
-
-```sh
-node calc.js 10*2
-```
-
-```stdout
 20
-```
-
-```sh
-node calc.js 10/2
-```
-
-```stdout
 5
 ```
 
@@ -323,68 +302,26 @@ Applying this change, let's ensure the original set of test expressions still
 works:
 
 ```sh
-node calc.js 10+2
+node calc.js 10+2 && node calc.js 10-2 && node calc.js 10*2 && node calc.js 10/2
 ```
 
 ```stdout
 12
-```
-
-```sh
-node calc.js 10-2
-```
-
-```stdout
 8
-```
-
-```sh
-node calc.js 10*2
-```
-
-```stdout
 20
-```
-
-```sh
-node calc.js 10/2
-```
-
-```stdout
 5
 ```
 
 And with spaces:
 
 ```sh
-node calc.js "10 + 2"
+node calc.js "10 + 2"  && node calc.js "10 - 2" && node calc.js "10 * 2" && node calc.js "10 / 2"
 ```
 
 ```stdout
 12
-```
-
-```sh
-node calc.js "10 - 2"
-```
-
-```stdout
 8
-```
-
-```sh
-node calc.js "10 * 2"
-```
-
-```stdout
 20
-```
-
-```sh
-node calc.js "10 / 2"
-```
-
-```stdout
 5
 ```
 
