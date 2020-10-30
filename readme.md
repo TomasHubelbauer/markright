@@ -292,3 +292,8 @@ defaulting to appending where to placement has been determined by contextual
 lines and the changes are not a patch.
 
 ### Fix fenced code block wrapped in `~~~` being matched and processed
+
+### Add a command for appending a code block for the change made in the files
+
+This way MarkRight editor support can way by leveraging editing generated files
+and automatically carrying in the changes in their most optimal form.
