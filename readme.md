@@ -308,3 +308,33 @@ and automatically carrying in the changes in their most optimal form.
 ### Add tests
 
 `npm test`
+
+### Set up GitHub Actions and GitHub Releases of binaries
+
+#### `pkg`
+
+https://github.com/vercel/pkg
+
+`npx pkg .`
+
+Resolve ESM though:
+
+https://github.com/vercel/pkg/issues/782
+
+This did not help:
+
+```json
+"pkg": {
+  "options": [
+    "experimental-modules"
+  ]
+},
+```
+
+#### `nexe`
+
+https://github.com/nexe/nexe
+
+This works great, but is Windows-only. Perhaps useful meanwhile.
+
+`npx nexe`
