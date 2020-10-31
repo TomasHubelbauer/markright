@@ -9,6 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: |
+          npm i windows-build-tools -g
           npx nexe --build
       - uses: actions/create-release@v1
         id: create_release
