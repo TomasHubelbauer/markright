@@ -1,27 +1,10 @@
 #!/usr/bin/env node
 
 import fs from 'fs';
-import MarkRight from './MarkRight.js';
+import path from 'path';
 
 void async function () {
-  const action = process.argv[2] || 'build';
-  let watch = false;
-  switch (action) {
-    case 'build': {
-      // Accept the default action
-      break;
-    }
-    case 'watch': {
-      // Turn on the MarkRight watch mode
-      watch = true;
-      break;
-    }
-    default: {
-      console.error(`Invalid action '${action}' passed, expected either 'build' or 'watch'.`);
-      process.exit(1);
-    }
-  }
-
+  // Check the entry document exists
   const filePath = process.argv[3] || 'readme.md';
   try {
     await fs.promises.access(filePath);
@@ -32,6 +15,70 @@ void async function () {
     process.exit(1);
   }
 
-  // TODO: Consider hoisting the watch functionality up and out of the class here
-  new MarkRight(filePath, watch).run();
+  // Hold a reference to MarkRight that updates if we watch the source code
+  let markRight;
+
+  // Track whether we are currently running to avoid non-deterministic parallel runs
+  let running = false;
+
+  // Run MarkRight unless it is already running and display reason why the run
+  async function run(event, fileName) {
+    if (running) {
+      return;
+    }
+
+    running = true;
+    console.group(fileName, event);
+    try {
+      // TODO: Consider running in a VM or monkey-patching `process.exit` for this
+      await markRight.run(event, fileName);
+    }
+    catch (error) {
+      console.log('Thrown');
+      console.error(error.message);
+    }
+
+    console.groupEnd();
+    running = false;
+  }
+
+  // Watch source code changes, reload MarkRight and run MarkRight unless running
+  async function watch(event, fileName) {
+    // Load the MarkRight module dynamically with a cache buster to reload it
+    const { default: MarkRight } = await import('./MarkRight.js?' + new Date().valueOf());
+    markRight = new MarkRight(filePath);
+    await run(event, fileName);
+  }
+
+  // Extract script path and see if it is running within its source code directory
+  const url = new URL(import.meta.url);
+  const srcDirectoryPath = path.normalize(path.dirname(url.pathname.slice(/* file:/// (triple slash…) */ '/'.length)));
+  const cwdDirectoryPath = process.cwd();
+
+  // Watch source code directory if the script is running from within it
+  if (cwdDirectoryPath.startsWith(srcDirectoryPath)) {
+    console.log('Watching MarkRight');
+    fs.watch(srcDirectoryPath, watch);
+  }
+
+  // Check and act on CLI action argument
+  const action = process.argv[2] || 'build';
+  switch (action) {
+    case 'build': {
+      // Accept the default action
+      break;
+    }
+    case 'watch': {
+      // Watch entry document and retry MarkRight
+      console.log('Watching', filePath);
+      fs.watch(filePath, run);
+      break;
+    }
+    default: {
+      console.error(`Invalid action '${action}' passed, expected either 'build' or 'watch'.`);
+      process.exit(1);
+    }
+  }
+
+  await watch(filePath, 'MarkRight');
 }()

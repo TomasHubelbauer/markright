@@ -33,8 +33,8 @@ This program is maintained and is of a WIP level of quality and support.
 See [`test`](test). Its [`readme.md`](test/readme.md) implements a simple Node
 JavaScript CLI calculator into [`calc.js`](test/calc.js).
 
-To run it, `cd` into it and run `markright` or use `npm test` to use MarkRight
-from source code.
+To run it, `cd` into it and run `markright` if you have already installed it or
+use `npm start` to use MarkRight in source code and entry document watch mode.
 
 Since this `readme.md` is written in MarkDown, it itself is a valid MarkRight
 document, too, however it produces no generated content.
@@ -193,9 +193,12 @@ names of the files being generated:
 See [Example](#example) on how to run the example with source code version of
 MarkRight.
 
-You can use `npm run watch` to watch the source code version. It watches it,
-links it to the global scope on each change and then runs it in the `test`
-directory where it defaults to `readme.md`.
+Please note that `npm start` will use `npm list` to put `markright` into global
+scope, so if you use it, it will replace the version of MarkRight you might have
+installed using `npm i -g tomashubelbauer/markright` with the source code
+version.
+
+MarkRight will run in source code watch mode if ran using `npm start`.
 
 Feel free to contribute by filing issues, contributing pull requests etc.
 
@@ -301,3 +304,7 @@ lines and the changes are not a patch.
 
 This way MarkRight editor support can way by leveraging editing generated files
 and automatically carrying in the changes in their most optimal form.
+
+### Add tests
+
+`npm test`
