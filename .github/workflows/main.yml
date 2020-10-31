@@ -1,0 +1,29 @@
+name: main
+on:
+  push:
+    branches:
+    - master
+jobs:
+  main:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout
+      - run: |
+          npx nexe
+      - uses: actions/create-release
+        id: create_release
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        with:
+          tag_name: ${{github.ref}}
+          release_name: Release ${{github.ref}}
+          draft: false
+          prerelease: false
+      - uses: actions/upload-release-asset
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        with:
+          upload_url: ${{steps.create_release.outputs.upload_url}}
+          asset_path: ./markright.exe
+          asset_name: markright.exe
+          asset_content_type: application/vnd.microsoft.portable-executable
