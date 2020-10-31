@@ -7,10 +7,10 @@ jobs:
   main:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout
+      - uses: actions/checkout@v2
       - run: |
           npx nexe
-      - uses: actions/create-release
+      - uses: actions/create-release@v1
         id: create_release
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
@@ -19,7 +19,7 @@ jobs:
           release_name: Release ${{github.ref}}
           draft: false
           prerelease: false
-      - uses: actions/upload-release-asset
+      - uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         with:
