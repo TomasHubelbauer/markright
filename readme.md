@@ -15,7 +15,15 @@ This program is maintained and is of a WIP level of quality and support.
 
 ## Installation
 
+### NPM
+
 `npm i -g tomashubelbauer/markright`
+
+### Binaries
+
+Currently, only a Windows executable is being released:
+
+https://github.com/TomasHubelbauer/markright/releases
 
 ## Usage
 
