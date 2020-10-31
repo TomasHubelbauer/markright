@@ -13,7 +13,7 @@ jobs:
           node-version: '14.3.0'
       - run: |
           npx nexe
-      - run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+      - run: echo "::set-output name=date::$(date -Is)"
         id: date
       - uses: actions/create-release@v1
         id: create_release
