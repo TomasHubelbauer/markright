@@ -11,8 +11,7 @@ jobs:
       - uses: actions/setup-node@v2-beta
         with:
           node-version: '14.3.0'
-      - run: |
-          npx nexe
+      - run: npx nexe
       - run: echo "::set-output name=date::$(date -Is | cut -b -19 | sed 's/[:T\]/-/g')"
         id: date
       - uses: actions/create-release@v1

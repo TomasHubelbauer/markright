@@ -310,6 +310,9 @@ and automatically carrying in the changes in their most optimal form.
 
 `npm test`
 
+Use `test` for tests which reference MarkRight from source and create `example`
+for examples, add a directory for multiple examples, starting with `calc`.
+
 ### Set up GitHub Actions and GitHub Releases of binaries
 
 #### `pkg`
@@ -340,4 +343,7 @@ This works great, but is Windows-only. Perhaps useful meanwhile.
 
 `npx nexe`
 
-Add `--icon` for Windows executable icon.
+Add `--ico icon.ico` for Windows executable icon alognside `--build` in GitHub
+Action as `--ico` can only be used in conjunction with `--build`.
+
+### Add a `docs` GitHub Pages site with examples
