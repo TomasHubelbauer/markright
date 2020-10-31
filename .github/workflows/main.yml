@@ -8,9 +8,11 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2-beta
+        with:
+          node-version: '14.3.0'
       - run: |
-          npm i windows-build-tools -g
-          npx nexe --build
+          npx nexe
       - uses: actions/create-release@v1
         id: create_release
         env:
