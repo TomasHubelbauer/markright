@@ -18,7 +18,11 @@ This program is maintained and is of a WIP level of quality and support.
 
 ## Usage
 
-`markright` (`readme.md`) or `markright document.md`
+- `markright` to build `readme.md`
+- `markright build` to build `readme.md`
+- `markright build document.md` to build `document.md`
+- `markright watch` to watch `readme.md`
+- `markright watch document.md` to watch `document.md`
 
 ## License
 
