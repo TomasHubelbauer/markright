@@ -338,3 +338,5 @@ https://github.com/nexe/nexe
 This works great, but is Windows-only. Perhaps useful meanwhile.
 
 `npx nexe`
+
+Add `--icon` for Windows executable icon.
