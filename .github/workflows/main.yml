@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: |
-          npx nexe
+          npx nexe --build
       - uses: actions/create-release@v1
         id: create_release
         env:
