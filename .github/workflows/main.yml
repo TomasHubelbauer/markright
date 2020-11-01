@@ -13,7 +13,7 @@ jobs:
           node-version: '14.3.0'
       - run: npx nexe
       - run: |
-          npm install --global windows-build-tools
+          choco install nasm
           npx boxednode --source index.js --target markright-boxednode
           ls
       - run: echo "::set-output name=date::$(date -Is | cut -b -19 | sed 's/[:T\]/-/g')"
