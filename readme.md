@@ -321,41 +321,6 @@ and automatically carrying in the changes in their most optimal form.
 Use `test` for tests which reference MarkRight from source and create `example`
 for examples, add a directory for multiple examples, starting with `calc`.
 
-### Set up GitHub Actions and GitHub Releases of binaries
-
-#### `pkg`
-
-https://github.com/vercel/pkg
-
-`npx pkg .`
-
-Resolve ESM though:
-
-https://github.com/vercel/pkg/issues/782
-
-This did not help:
-
-```json
-"pkg": {
-  "options": [
-    "experimental-modules"
-  ]
-},
-```
-
-#### `nexe`
-
-https://github.com/nexe/nexe
-
-This works great, but is Windows-only. Perhaps useful meanwhile.
-
-`npx nexe`
-
-Add `--ico icon.ico` for Windows executable icon alognside `--build` in GitHub
-Action as `--ico` can only be used in conjunction with `--build`.
-
 ### Add a `docs` GitHub Pages site with examples
 
-### Add macOS and Linux builds of BoxedNode to GitHub Actions
-
-Enter the matrix.
+### Fix the cross-platform build being WIP in the `test` branch
