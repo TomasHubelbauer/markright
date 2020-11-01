@@ -355,3 +355,7 @@ Add `--ico icon.ico` for Windows executable icon alognside `--build` in GitHub
 Action as `--ico` can only be used in conjunction with `--build`.
 
 ### Add a `docs` GitHub Pages site with examples
+
+### Add macOS and Linux builds of BoxedNode to GitHub Actions
+
+Enter the matrix.

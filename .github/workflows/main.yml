@@ -13,8 +13,9 @@ jobs:
           node-version: '14.3.0'
       - run: npx nexe
       - run: |
+          # https://github.com/nodejs/build/issues/1190
           choco install nasm
-          npx boxednode --source index.js --target markright-boxednode
+          npx boxednode --source index.js --target markright-boxednode.exe
           ls
       - run: echo "::set-output name=date::$(date -Is | cut -b -19 | sed 's/[:T\]/-/g')"
         id: date
@@ -32,6 +33,14 @@ jobs:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         with:
           upload_url: ${{steps.create_release.outputs.upload_url}}
-          asset_path: ./markright.exe
+          asset_path: markright.exe
           asset_name: markright.exe
+          asset_content_type: application/vnd.microsoft.portable-executable
+      - uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        with:
+          upload_url: ${{steps.create_release.outputs.upload_url}}
+          asset_path: markright-boxednode.exe
+          asset_name: markright-boxednode.exe
           asset_content_type: application/vnd.microsoft.portable-executable
