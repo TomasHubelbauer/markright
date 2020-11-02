@@ -5,8 +5,15 @@ import path from 'path';
 
 void async function () {
   // Check the entry document exists
-  const filePath = process.argv[3] || 'readme.md';
+  let filePath = process.argv[3] || '.';
   try {
+    const stat = await fs.promises.stat(filePath);
+    if (stat.isDirectory()) {
+      filePath = path.join(filePath, 'readme.md');
+    }
+
+    process.chdir(path.dirname(filePath));
+    filePath = path.basename(filePath);
     await fs.promises.access(filePath);
   }
   catch (error) {
@@ -35,7 +42,7 @@ void async function () {
     }
     catch (error) {
       console.log('Thrown');
-      console.error(error.message);
+      console.error(error);
     }
 
     console.groupEnd();
@@ -80,5 +87,5 @@ void async function () {
     }
   }
 
-  await watch(filePath, 'MarkRight');
+  await watch(process.argv[3] || '.', 'MarkRight');
 }()

@@ -6,6 +6,7 @@
   "bin": "index.js",
   "type": "module",
   "scripts": {
-    "start": "npm unlink && npm link && cd test && markright watch"
+    "test": "node . watch example/feature-showcase",
+    "start": "node . watch"
   }
 }

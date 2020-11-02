@@ -16,7 +16,10 @@ export default class MarkRight {
   }
 
   async run() {
-    const text = await fs.promises.readFile(this.filePath, 'utf-8');
+    let text = await fs.promises.readFile(this.filePath, 'utf-8');
+
+    // Normalize CRLF to LF to simplify the regular expression for code blocks
+    text = text.replace(/\r\n/g, '\n');
 
     // Math fenced code blocks
     // - (^|\n) to ensure starting with line or with the start of text
@@ -51,8 +54,9 @@ export default class MarkRight {
         }
 
         // Edit (create/update) or compare based on a file name in argument
-        else if (argument) {
-          await this.file(argument, codeText);
+        else {
+          // Fall back to `language` if no `argument`, e.g. info text `?`
+          await this.file(argument || language, codeText);
         }
       }
     }
@@ -100,7 +104,7 @@ export default class MarkRight {
       return this.file_replace(fileName, text);
     }
     catch (error) {
-      if (error.code !== 'EEXIST') {
+      if (error.code !== 'ENOENT') {
         throw error;
       }
 
@@ -331,6 +335,7 @@ export default class MarkRight {
   }
 
   compare(/** @type {string} */ actual, /** @type {string} */ expected, /** @type {string} */ title) {
+    actual = actual.replace(/\r\n/g, '\n');
     if (actual === expected) {
       return;
     }
