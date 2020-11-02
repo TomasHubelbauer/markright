@@ -11,6 +11,8 @@ jobs:
       - run: |
           node transpile
           npx pkg .
+          curl -L https://github.com/electron/rcedit/releases/latest/download/rcedit-x64.exe -o rcedit.exe
+          ./rcedit markright-win.exe --set-icon icon.ico
       - run: echo "::set-output name=date::$(date -Is | cut -b -19 | sed 's/[:T\]/-/g')"
         id: date
       - uses: actions/create-release@v1

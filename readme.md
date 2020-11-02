@@ -322,5 +322,3 @@ Use `test` for tests which reference MarkRight from source and create `example`
 for examples, add a directory for multiple examples, starting with `calc`.
 
 ### Add a `docs` GitHub Pages site with examples
-
-### Fix the cross-platform build being WIP in the `test` branch
