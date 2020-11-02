@@ -9,21 +9,13 @@
 
 **MarkRight** is a tool for didactic literate programming.
 
-## Status
-
-This program is maintained and is of a WIP level of quality and support.
+It works by processing a MarkDown file to manage files and run commands based on
+its contents in order to (re)produce a program from literate programming source.
 
 ## Installation
 
-### NPM
-
-`npm i -g tomashubelbauer/markright`
-
-### Binaries
-
-Currently, only a Windows executable is being released:
-
-https://github.com/TomasHubelbauer/markright/releases
+- `npm i -g tomashubelbauer/markright`
+- https://github.com/TomasHubelbauer/markright/releases/latest
 
 ## Usage
 
@@ -32,10 +24,6 @@ https://github.com/TomasHubelbauer/markright/releases
 - `markright build document.md` to build `document.md`
 - `markright watch` to watch `readme.md`
 - `markright watch document.md` to watch `document.md`
-
-## License
-
-[AGPL](license.md)
 
 ## Example
 
@@ -214,6 +202,14 @@ Feel free to contribute by filing issues, contributing pull requests etc.
 ## Support
 
 Email me, open an issue, open a PR, …
+
+## Status
+
+This program is maintained and is of a WIP level of quality and support.
+
+## License
+
+[AGPL](license.md)
 
 ## To-Do
 
