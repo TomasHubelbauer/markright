@@ -8,15 +8,9 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2-beta
-        with:
-          node-version: '14.3.0'
-      - run: npx nexe
       - run: |
-          # https://github.com/nodejs/build/issues/1190
-          choco install nasm
-          npx boxednode --source index.js --target markright-boxednode.exe
-          ls
+          node transpile
+          npx pkg .
       - run: echo "::set-output name=date::$(date -Is | cut -b -19 | sed 's/[:T\]/-/g')"
         id: date
       - uses: actions/create-release@v1
@@ -33,14 +27,22 @@ jobs:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         with:
           upload_url: ${{steps.create_release.outputs.upload_url}}
-          asset_path: markright.exe
-          asset_name: markright.exe
-          asset_content_type: application/vnd.microsoft.portable-executable
+          asset_path: markright-linux
+          asset_name: markright-linux
+          asset_content_type: application/octet-stream
       - uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         with:
           upload_url: ${{steps.create_release.outputs.upload_url}}
-          asset_path: markright-boxednode.exe
-          asset_name: markright-boxednode.exe
-          asset_content_type: application/vnd.microsoft.portable-executable
+          asset_path: markright-macos
+          asset_name: markright-macos
+          asset_content_type: application/octet-stream
+      - uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        with:
+          upload_url: ${{steps.create_release.outputs.upload_url}}
+          asset_path: markright-win.exe
+          asset_name: markright-win.exe
+          asset_content_type: application/octet-stream
