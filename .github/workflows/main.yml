@@ -12,11 +12,8 @@ jobs:
         with:
           node-version: '14'
       - run: |
-          $ErrorActionPreference = "Stop"
           node transpile
-          npx pkg . --debug
-          curl -L https://github.com/electron/rcedit/releases/latest/download/rcedit-x64.exe -o rcedit.exe
-          ./rcedit markright-win.exe --set-icon icon.ico
+          npx pkg .
       - run: echo "::set-output name=date::$(date -Is | cut -b -19 | sed 's/[:T\]/-/g')"
         id: date
       - uses: actions/create-release@v1

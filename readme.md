@@ -322,3 +322,15 @@ Use `test` for tests which reference MarkRight from source and create `example`
 for examples, add a directory for multiple examples, starting with `calc`.
 
 ### Add a `docs` GitHub Pages site with examples
+
+### Fix the `Pkg: Error reading from file.` error using `rcedit` on the binary
+
+When using this in the CI to apply an icon to the Windows executable:
+
+```
+curl -L https://github.com/electron/rcedit/releases/latest/download/rcedit-x64.exe -o rcedit.exe
+./rcedit markright-win.exe --set-icon icon.ico
+```
+
+I get the above error while running the executable. Before applying the icon,
+the executable works just fine.
