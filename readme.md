@@ -221,3 +221,5 @@ the executable works just fine.
 Here and there after the initial `npm test` run, when the `readme.me` is changed
 and the `watch` picks it up, the only line printed is `Processed readme.md`, but
 none of the code-blocks have actually run.
+
+### Run `npm test` in CI to ensure the build fails if the code is broken
