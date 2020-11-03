@@ -306,7 +306,7 @@ export default class MarkRight {
       }
     }
 
-    // TODO: Select the first start candidate instead to ensure no conflict within
+    // TODO: Select the first end candidate instead to ensure no conflict within
     if (endCandidates.length > 1) {
       throw new Error('Multiple end candidates found.');
     }
