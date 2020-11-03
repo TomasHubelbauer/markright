@@ -36,6 +36,8 @@ its contents in order to (re)produce a program from literate programming source.
 See the [`example`](example) directory. To run MarkRight from source against an
 example in that directory, run `npm start example/${name}`.
 
+To run all examples, run `./test.ps1`.
+
 ## Features
 
 See the [`feature-showcase`](example/feature-showcase) example for a rundown of
@@ -61,29 +63,12 @@ computer science notebooks we see today.
 
 ## Limitations
 
-MarkRight places several limitations on the MarkDown being used as well as the
-names of the files being generated:
-
-- MarkRight syntax might conflict with info text not inteded for MarkRight
-  (this is extremely unlikely due to the specific MarkRight syntax but possible)
-- MarkRight reserves some symbols at the end of file names for special actions
-  - `?` indicates the file text should be checked against the excepcted text
-  - `+` indicates the code block text is to be appended not to replace the file
-  - `-` indicates the code block text is to be interpolated not to replace file
-  - `±` indicates the code block text is a patch to be appled to the file text
-  - `_` is a placeholder for the last file name and cannot be used as file name
-  - Some operating systems allows some of these symbols in file names bur MR not
-- MarkRight can not output `` ` `` and `~` into a file name using the info text
-  as these symbols are disallowed in MarkDown fenced code block info text
-  (this can be worked around using the alternative inline code run syntax)
-- MarkRight has no direct way of referencing external assets or describe their
-  inclusion into the repository other than plain language or a command block
-  which pulls them in (`mv`, `cp`, `curl`, `wget`, whatever other way…)
-
-## Development
-
-Use `npm test` to run MarkRight against the `example/feature-showcase` document
-which uses all the MarkRight features and works as a development test harness.
+- MarkRight converts CRLF in file text into LF for easier internal processing
+- MarkRight reserves `?` and `!` at the end of file names for action modifiers
+- MarkRight reserves `_` as a placeholder file name, won't use `_` name verbatim
+- MarkRight can't output `~` and `` ` `` into file names due to MarkRight rules
+- MarkRight's only supported way of referencing/pulling external assets is thru
+  the use of scripts (`mv`, `cp`, `curl`, `wget`, whatever other way…)
 
 ## Support
 
@@ -169,21 +154,12 @@ Your random number is: {random number}.
 ```
 ~~~
 
-### Consider consolidating `-` and `±` markers into just `±` (and maybe `+` too)
+### Support mixed `+` and `-` in patch and support unchanged lines in patch
 
-Right now `-` and `±` work differently so two symbols are used, but we could try
-and differentiate based on the patch text. If it is a contextual patch where
-either leading or trailing (or both) lines are used to determine the patch
-placement within the file, there won't be any lines starting with `+` or `-`. If
-there are any, it most likely means this is a regular patch. For now we do not
-support unchanged lines in patches, so for now we could have 100 % confidence by
-checking if all lines are either `+` or `-` lines. Later if we decide to support
-unchanged lines in patches, there will be room for false positives, but it may
-be sufficiently small that it won't be a problem in practice.
-
-We might even be able to get away with merging `+` marker with these too, by
-defaulting to appending where to placement has been determined by contextual
-lines and the changes are not a patch.
+Unchanged lines in patch will make detecting patch from insert/append harder but
+it should still be possible to detect: all lines either start with a sign symbol
+or are present in the file verbatim [in case of unchanged lines] in the correct,
+patch, order.
 
 ### Fix fenced code block wrapped in `~~~` being matched and processed
 
@@ -195,12 +171,13 @@ node index.js
 ```
 ~~~
 
+It should be enough to patch out the `~~~` blocks first and only then look for
+fenced code blocks?
+
 ### Add a command for appending a code block for the change made in the files
 
 This way MarkRight editor support can way by leveraging editing generated files
 and automatically carrying in the changes in their most optimal form.
-
-### Add a `docs` GitHub Pages site with examples
 
 ### Fix the `Pkg: Error reading from file.` error using `rcedit` on the binary
 

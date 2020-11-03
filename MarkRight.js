@@ -8,9 +8,6 @@ export default class MarkRight {
   constructor(/** @type {string} */ filePath) {
     this.filePath = filePath;
 
-    // The special markers allowed at the end of file name to do special actions
-    this.markers = ['?', '+', '-', '±'];
-
     // The length of text to preview when printing actual/expected comparisons
     this.threshold = 80;
   }
@@ -65,127 +62,123 @@ export default class MarkRight {
   }
 
   async file(/** @type {string} */ fileName, /** @type {string} */ text) {
-    // Resolve the `_` file name placeholder to the last known file name
-    if (fileName === '_' || this.markers.includes(fileName) || this.markers.map(marker => '_' + marker).includes(fileName)) {
+    // Recognize action modifier (question or exclamation mark) in file name
+    /** @type {undefined | 'match' | 'patch'} */
+    let action;
+    switch (fileName[fileName.length - 1]) {
+      case '?': {
+        action = 'match';
+        fileName = fileName.slice(0, -1) || '_';
+        break;
+      }
+      case '!': {
+        action = 'patch';
+        fileName = fileName.slice(0, -1) || '_';
+        break;
+      }
+    }
+
+    // Preserve file name if the `_` placeholder is used otherwise update it
+    if (fileName === '_') {
       if (!this.fileName) {
         throw new Error('Cannot use the file name placeholder before naming a file.');
       }
-
-      // Preserve the file name suffix if any:
-      // - If underscore, leave it out
-      // - If standalone marker, append it
-      // - If underscore with marker, append only the marker
-      fileName = this.fileName + (fileName === '_' ? '' : (fileName[1] || fileName[0]));
+    }
+    else {
+      this.fileName = fileName;
     }
 
-    if (fileName.endsWith('?')) {
-      this.fileName = fileName.slice(0, -'?'.length);
-      return this.file_compare(this.fileName, text);
-    }
-
-    if (fileName.endsWith('+')) {
-      this.fileName = fileName.slice(0, -'+'.length);
-      return this.file_append(this.fileName, text);
-    }
-
-    if (fileName.endsWith('-')) {
-      this.fileName = fileName.slice(0, -'-'.length);
-      return this.file_insert(this.fileName, text);
-    }
-
-    if (fileName.endsWith('±')) {
-      this.fileName = fileName.slice(0, -'±'.length);
-      return this.file_patch(this.fileName, text);
-    }
-
-    this.fileName = fileName;
+    /** @type {undefined | string} */
+    let fileText;
     try {
-      await fs.promises.access(fileName);
-      return this.file_replace(fileName, text);
+      fileText = await fs.promises.readFile(this.fileName, 'utf-8');
     }
     catch (error) {
       if (error.code !== 'ENOENT') {
         throw error;
       }
-
-      return this.file_create(fileName, text);
     }
+
+    // Math the file  text against the code block text
+    if (action === 'match') {
+      if (fileText === undefined) {
+        throw new Error('Cannot match file which does not exist!');
+      }
+
+      this.file_match(fileText, text);
+      return;
+    }
+
+    // Patch the text to write prior to writing it
+    if (action === 'patch') {
+      text = this.file_patch(fileText || '', text);
+    }
+
+    await fs.promises.writeFile(this.fileName, text);
+    const message = fileText === undefined ? 'Created' : (action === 'patch' ? 'Patched' : 'Replaced');
+    console.log(message, this.fileName);
   }
 
-  async file_compare(/** @type {string} */ fileName, /** @type {string} */ text) {
-    this.compare(await fs.promises.readFile(fileName, 'utf-8'), text, 'file');
-    console.log('Verified', fileName, 'match');
+  file_match(/** @type {string} */ fileText, /** @type {string} */ text) {
+    this.compare(fileText, text, 'file');
+    console.log('Matched', this.fileName);
   }
 
-  async file_append(/** @type {string} */ fileName, /** @type {string} */ text) {
-    await fs.promises.appendFile(fileName, text);
-    console.log('Appended to', fileName);
-  }
-
-  async file_insert(/** @type {string} */ fileName, /** @type {string} */ text) {
-    const fileText = await fs.promises.readFile(fileName, 'utf-8');
+  file_patch(/** @type {string} */ fileText, /** @type {string} */ text) {
     const fileLines = fileText.split('\n');
     const textLines = text.split('\n');
-
-    // Remove the empty line at the end
     textLines.pop();
+
+    // TODO: Support mixed + and - lines and unchanged lines
+    if (textLines.every(line => line.startsWith('+ ') || line.startsWith('- '))) {
+      const deletionLines = [];
+      for (let index = 0; index < textLines.length; index++) {
+        const line = textLines[index];
+        if (line.startsWith('- ')) {
+          deletionLines.push(line.slice('- '.length));
+        }
+        else {
+          break;
+        }
+      }
+
+      const additionLines = [];
+      for (let index = textLines.length - 1; index > 0; index--) {
+        const line = textLines[index];
+        if (line.startsWith('+ ')) {
+          additionLines.unshift(line.slice('+ '.length));
+        }
+        else {
+          break;
+        }
+      }
+
+      if (deletionLines.length + additionLines.length !== textLines.length) {
+        throw new Error('The changes are not a set of removals followed by a set of additions.');
+      }
+
+      const positionCandidate = this.findStart(fileLines, deletionLines);
+      if (positionCandidate === undefined) {
+        throw new Error('No position candidate was found.');
+      }
+
+      fileLines.splice(positionCandidate.index, positionCandidate.length, ...additionLines);
+      return fileLines.join('\n');
+    }
 
     const startCandidate = this.findStart(fileLines, textLines);
     const endCandidate = this.findEnd(fileLines, textLines);
 
-    // Replace the identified portion
+    if (startCandidate === undefined && endCandidate === undefined) {
+      return fileText + text;
+    }
+
+    if (startCandidate === undefined || endCandidate === undefined) {
+      console.log('TODO');
+    }
+
     fileLines.splice(startCandidate.index, endCandidate.index - startCandidate.index, ...textLines);
-    await fs.promises.writeFile(fileName, fileLines.join('\n'));
-    console.log('Inserted into', fileName);
-  }
-
-  async file_create(/** @type {string} */ fileName, /** @type {string} */ text) {
-    await fs.promises.writeFile(fileName, text);
-    console.log('Created', fileName);
-  }
-
-  async file_replace(/** @type {string} */ fileName, /** @type {string} */ text) {
-    await fs.promises.writeFile(fileName, text);
-    console.log('Replaced', fileName);
-  }
-
-  // TODO: Support mixed + and - lines and unchanged lines
-  async file_patch(/** @type {string} */ fileName, /** @type {string} */ changes) {
-    const text = await fs.promises.readFile(fileName, 'utf-8');
-    const fileLines = text.split('\n');
-    const textLines = changes.split('\n');
-    textLines.pop();
-
-    const deletionLines = [];
-    for (let index = 0; index < textLines.length; index++) {
-      const line = textLines[index];
-      if (line.startsWith('- ')) {
-        deletionLines.push(line.slice('- '.length));
-      }
-      else {
-        break;
-      }
-    }
-
-    const additionLines = [];
-    for (let index = textLines.length - 1; index > 0; index--) {
-      const line = textLines[index];
-      if (line.startsWith('+ ')) {
-        additionLines.unshift(line.slice('+ '.length));
-      }
-      else {
-        break;
-      }
-    }
-
-    if (deletionLines.length + additionLines.length !== textLines.length) {
-      throw new Error('The changes are not a set of removals followed by a set of additions.');
-    }
-
-    const positionCandidate = this.findStart(fileLines, deletionLines);
-    fileLines.splice(positionCandidate.index, positionCandidate.length, ...additionLines);
-    await fs.promises.writeFile(fileName, fileLines.join('\n'));
-    console.log('Patched', fileName);
+    return fileLines.join('\n');
   }
 
   // TODO: Add support for running in a specific shell (sh, bash, posh, …)
@@ -254,11 +247,11 @@ export default class MarkRight {
   }
 
   async run_patch(/** @type {string} */ fileName, /** @type {string} */ text) {
-    await this.file(fileName + '±', text);
+    await this.file(fileName + '!', text);
   }
 
   async run_diff(/** @type {string} */ fileName, /** @type {string} */ text) {
-    await this.file(fileName + '±', text);
+    await this.file(fileName + '!', text);
   }
 
   findStart(/** @type {string[]} */ fileLines, /** @type {string[]} */ textLines) {
@@ -279,11 +272,6 @@ export default class MarkRight {
       if (candidate.length > 0) {
         startCandidates.push(candidate);
       }
-    }
-
-    // TODO: Treat this as prepending to the file instead of failing
-    if (startCandidates.length === 0) {
-      throw new Error('No start candidates found');
     }
 
     // TODO: Select the last start candidate instead to ensure no conflict within
@@ -313,11 +301,6 @@ export default class MarkRight {
       if (candidate.length > 0) {
         endCandidates.push(candidate);
       }
-    }
-
-    // TODO: Treat this as appending to the file instead of failing
-    if (endCandidates.length === 0) {
-      throw new Error('No end candidates found');
     }
 
     // TODO: Select the first start candidate instead to ensure no conflict within

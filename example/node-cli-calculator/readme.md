@@ -87,7 +87,7 @@ the information about the file not having the expected content, which would be
 suboptimal, but we would ensure that it has the expected content coming forward,
 so this syntax has been selected.
 
-```js ?
+```?
 ```
 
 ## Accepting Input
@@ -148,7 +148,7 @@ Next up, we need to validate the equation format (using a regex) and pull out
 the operands and the operator. Then we can carry out the evaluation and print
 the result.
 
-```js -
+```js !
 // Instruct on how to pass the equation argument if missing
 if (!equation) {
   console.error('Please provide an equation using a command line argument.');
@@ -170,7 +170,7 @@ console.log(equation);
 This check works fine, but we can improve it by pulling out the operands and the
 operation while we're doing the format check to kill two birds with one stone:
 
-```js -
+```js !
 // Validate the `equation` argument for operand-operation-operand format
 const match = /^(?<leftOperand>\d+)(?<operator>(\+|-|\*|\/))(?<rightOperand>\d+)$/.exec(equation);
 if (!match) {
@@ -203,7 +203,7 @@ both valid numbers JavaScript can represent.
 
 ## Conversion
 
-```js -
+```js !
 // Print the equation parts we received
 const leftOperand = Number(match.groups.leftOperand);
 const rightOperand = Number(match.groups.rightOperand);
@@ -233,7 +233,7 @@ We do not need to validate the operator, the regex already does it for us, so
 the only thing left now is to implement a `switch` which based on the operator
 prints the resulting value of the equation:
 
-```js -
+```js !
 const { operator } = match.groups;
 switch (operator) {
   case '+': {
