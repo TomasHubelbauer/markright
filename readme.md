@@ -58,15 +58,16 @@ for source control web UIs and further emphasises the goal of didactic benefit.
 
 ## Inspiration
 
-MarkRight is inspired by the concept lab notebooks (lab notes), but also by the
-computer science notebooks we see today.
+MarkRight is inspired by the concept lab notebooks (lab notes), and later by the
+concept of computer science notebooks we see in data science today.
 
 ## Limitations
 
 - MarkRight converts CRLF in file text into LF for easier internal processing
 - MarkRight reserves `?` and `!` at the end of file names for action modifiers
 - MarkRight reserves `_` as a placeholder file name, won't use `_` name verbatim
-- MarkRight can't output `~` and `` ` `` into file names due to MarkRight rules
+- MarkRight can't output `~` and `` ` `` into file names due to MarkDown syntax
+  rules (neither is allowed in a fenced code block info string)
 - MarkRight's only supported way of referencing/pulling external assets is thru
   the use of scripts (`mv`, `cp`, `curl`, `wget`, whatever other way…)
 
@@ -76,7 +77,7 @@ This program is maintained and is of a WIP level of quality and support.
 
 ## License
 
-MarkRight is licensed under the terms of the [AGPL 3.0](license.md) license.
+MarkRight is licensed under the terms of the [AGPL 3.0only](license.md) license.
 
 ## To-Do
 
