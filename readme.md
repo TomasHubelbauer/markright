@@ -101,11 +101,6 @@ the generated files and only "translate" the cursor in the code block to the
 backing content in the generated file so that things like modules work (VS Code
 knows what to suggest for module paths etc.).
 
-### Consider adding support for `~~~` to be able to output MarkDown code blocks
-
-Right now MarkDown can be output using MarkRight, but code blocks can't because
-they need to be escaped in code blocks that MarkRight recognizes using `~~~`.
-
 ### Consider allowing shell code blocks to check streams in info string
 
 Instead of following each shell code block with `stdout` and `stderr`, add an
