@@ -190,6 +190,15 @@ the executable works just fine.
 
 ### Catch `stdin` expectation in scripts where possible and probably error on it
 
+If a process spawned as a result of MarkRight encountering a script block is
+trying to read from `stdin`, detect that and throw an error. There is no useful
+way MarkRight could provide to the `stdin` other than piping its own `stdin` in,
+but I don't want MarkRight to be interactive this way. Instead, users should use
+code blocks to generated files expected by the process they ran so it doesn't
+need to ask for anything at `stdin`.
+
+https://stackoverflow.com/q/64670110/2715716
+
 ### Fix changes in the document picked out by the watcher resulting in empty run
 
 Here and there after the initial `npm test` run, when the `readme.me` is changed
