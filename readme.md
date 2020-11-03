@@ -25,23 +25,25 @@ its contents in order to (re)produce a program from literate programming source.
 
 ## Usage
 
-- `markright` to build `readme.md`
-- `markright build` to build `readme.md`
-- `markright build document.md` to build `document.md`
-- `markright watch` to watch `readme.md`
-- `markright watch document.md` to watch `document.md`
+- `markright` (`readme.md`)
+- `markright build` (`readme.md`)
+- `markright build document.md`
+- `markright watch` (`readme.md`)
+- `markright watch document.md`
 
 ## Example
 
-See the [`example`](example) directory. To run MarkRight from source against an
-example in that directory, run `npm start example/${name}`.
+See the [`example`](example) directory.
 
-To run all examples, run `./test.ps1`.
+To run MarkRight from source against an example in that directory, run
+`npm start example/${name}` (`markright watch example/${name}`).
+
+To run all examples, run `./test.ps1` (`markright build` on each example).
 
 ## Features
 
-See the [`feature-showcase`](example/feature-showcase) example for a rundown of
-MarkRight features. Run with `npm test` or `npm start example/feature-showcase`.
+See the [`feature-showcase` example](example/feature-showcase) for a rundown of
+MarkRight features.
 
 ## Purpose
 
@@ -49,8 +51,8 @@ MarkRight provides a solution for literate programming with focus on didactics,
 which is particularly well served by the fact that the generated content from
 the MarkRight document is overriden each time MarkRight is run which forces the
 document to be a single source of truth and thus always up-to-date. This
-prevents tutorial/documentation/specification from driftinf/staling compated to
-the implementation.
+prevents tutorial/documentation/specification from drifting/stale-ing compared
+to the implementation.
 
 The generated content should still be tracked in source control to ensure it is
 easily accessibly even without running MarkRight to generate it. This is useful
@@ -60,6 +62,22 @@ for source control web UIs and further emphasises the goal of didactic benefit.
 
 MarkRight is inspired by the concept lab notebooks (lab notes), and later by the
 concept of computer science notebooks we see in data science today.
+
+## Development
+
+In development, use `npm test` (`node . watch features/feature-showcase`) to run
+the feature showcase example which also works as a features test harness.
+
+Use `./test.ps1` (`node . build` on each example in `examples`) to see if all
+examples still work as intended. This script is used by the GitHub Actions CI on
+each commit.
+
+### Versioning
+
+MarkRight is in WIP mode at the moment. The version is `0.0.0` and a release is
+cut for each commit which passes the CI tests. Once MarkRight reaches `1.0`,
+semantic versioning will be used instead and releases will be cut with each
+version change and will contain a proper changelog.
 
 ## Limitations
 
