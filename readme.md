@@ -162,19 +162,6 @@ it should still be possible to detect: all lines either start with a sign symbol
 or are present in the file verbatim [in case of unchanged lines] in the correct,
 patch, order.
 
-### Fix fenced code block wrapped in `~~~` being matched and processed
-
-This happens when running MarkRight on MarkDown like below:
-
-~~~
-```sh
-node index.js
-```
-~~~
-
-It should be enough to patch out the `~~~` blocks first and only then look for
-fenced code blocks?
-
 ### Add a command for appending a code block for the change made in the files
 
 This way MarkRight editor support can way by leveraging editing generated files

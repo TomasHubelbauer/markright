@@ -147,3 +147,19 @@ This results in:
 Some content
 Some other content
 ```
+
+### Ignore verbatim code blocks
+
+MarkDown supports verbatim code blocks denoted by `~~~`. These are used to embed
+fenced code blocks within a document verbatim, without interpreting them. We can
+showcase a MarkRight fenced code block in source (as opposed to rendered) form
+by wrapping it in verbatim code blocks:
+
+~~~
+```?
+Some content
+Some other content
+```
+~~~
+
+The above is the exact MarkDown syntax of a file match check (of the last file).

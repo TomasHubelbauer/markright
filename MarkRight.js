@@ -18,6 +18,9 @@ export default class MarkRight {
     // Normalize CRLF to LF to simplify the regular expression for code blocks
     text = text.replace(/\r\n/g, '\n');
 
+    // Remove verbatim code blocks to avoid interpreting fenced code blocks within
+    text = text.replace(/(^|\n)~~~\n(.*?\n)*?~~~(\n|$)/g, '');
+
     // Math fenced code blocks
     // - (^|\n) to ensure starting with line or with the start of text
     // - (`(?<fileName>.*?)`\n)? to capture optional associated inline code run
@@ -120,7 +123,7 @@ export default class MarkRight {
   }
 
   file_match(/** @type {string} */ fileText, /** @type {string} */ text) {
-    this.compare(fileText, text, 'file');
+    this.compare(fileText, text, this.fileName);
     console.log('Matched', this.fileName);
   }
 
