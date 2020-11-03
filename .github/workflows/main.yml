@@ -12,6 +12,9 @@ jobs:
         with:
           node-version: '14'
       - run: |
+          Set-PSDebug -Trace 1
+          $ErrorActionPreference = "Stop"
+          node . build example/feature-showcase
           node transpile
           npx pkg .
       - run: echo "::set-output name=date::$(date -Is | cut -b -19 | sed 's/[:T\]/-/g')"
