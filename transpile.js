@@ -22,15 +22,12 @@ const changes = {
 
 void async function () {
   for (const fileName in changes) {
-    console.group(fileName);
     let text = await fs.promises.readFile(fileName, 'utf-8');
 
     for (const change in changes[fileName]) {
-      console.log(change);
       text = text.replace(change, changes[fileName][change]);
     }
 
-    console.groupEnd();
     await fs.promises.writeFile(fileName, text);
   }
 }()
