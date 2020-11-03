@@ -37,7 +37,6 @@ void async function () {
     running = true;
     console.group(fileName, event);
     try {
-      // TODO: Consider running in a VM or monkey-patching `process.exit` for this
       await markRight.run(event, fileName);
     }
     catch (error) {

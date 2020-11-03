@@ -38,7 +38,7 @@ export default class MarkRight {
       // Edit (create/update) a file when an associated inline code run exists
       if (fileName) {
         if (argument) {
-          this.exit(`No arguments must be used in info text in edit mode.`);
+          throw new Error(`No arguments must be used in info text in edit mode.`);
         }
 
         await this.file(fileName, codeText);
@@ -68,7 +68,7 @@ export default class MarkRight {
     // Resolve the `_` file name placeholder to the last known file name
     if (fileName === '_' || this.markers.includes(fileName) || this.markers.map(marker => '_' + marker).includes(fileName)) {
       if (!this.fileName) {
-        this.exit('Cannot use the file name placeholder before naming a file.');
+        throw new Error('Cannot use the file name placeholder before naming a file.');
       }
 
       // Preserve the file name suffix if any:
@@ -179,7 +179,7 @@ export default class MarkRight {
     }
 
     if (deletionLines.length + additionLines.length !== textLines.length) {
-      this.exit('The changes are not a set of removals followed by a set of additions.');
+      throw new Error('The changes are not a set of removals followed by a set of additions.');
     }
 
     const positionCandidate = this.findStart(fileLines, deletionLines);
@@ -191,7 +191,7 @@ export default class MarkRight {
   // TODO: Add support for running in a specific shell (sh, bash, posh, …)
   async run_sh(/** @type {string} */ _, /** @type {string} */ text) {
     if (_) {
-      this.exit('Shell script can have no argument.');
+      throw new Error('Shell script can have no argument.');
     }
 
     // TODO: Use an OS-appropriate shell here
@@ -218,16 +218,16 @@ export default class MarkRight {
 
   async run_stdout(/** @type {string} */ _, /** @type {string} */ text) {
     if (_) {
-      this.exit('Stdout check can have no argument.');
+      throw new Error('Stdout check can have no argument.');
     }
 
     if (this.exitCode === undefined) {
-      this.exit('Cannot check process stream before running a script!', 1);
+      throw new Error('Cannot check process stream before running a script!');
     }
 
     if (this.exitCode !== 0) {
       console.error(this.stderr);
-      this.exit('Exit code is not zero.');
+      throw new Error('Exit code is not zero.');
     }
 
     this.compare(this.stdout, text, 'stdout');
@@ -237,16 +237,16 @@ export default class MarkRight {
   async run_stderr(/** @type {string} */ code, /** @type {string} */ text) {
     const exitCode = code === undefined ? undefined : Number(code);
     if (Number.isNaN(exitCode)) {
-      this.exit('Stderr check argument must be a number if present.');
+      throw new Error('Stderr check argument must be a number if present.');
     }
 
     if (this.exitCode === undefined) {
-      this.exit('Cannot check process stream before running a script!', 1);
+      throw new Error('Cannot check process stream before running a script!');
     }
 
     if (code !== undefined && this.exitCode !== exitCode) {
       console.error(this.stderr);
-      this.exit(`Exit code is not ${exitCode}.`);
+      throw new Error(`Exit code is not ${exitCode}.`);
     }
 
     this.compare(this.stderr, text, 'stderr');
@@ -283,12 +283,12 @@ export default class MarkRight {
 
     // TODO: Treat this as prepending to the file instead of failing
     if (startCandidates.length === 0) {
-      this.exit('No start candidates found');
+      throw new Error('No start candidates found');
     }
 
     // TODO: Select the last start candidate instead to ensure no conflict within
     if (startCandidates.length > 1) {
-      this.exit('Multiple start candidates found.');
+      throw new Error('Multiple start candidates found.');
     }
 
     const [startCandidate] = startCandidates;
@@ -317,21 +317,16 @@ export default class MarkRight {
 
     // TODO: Treat this as appending to the file instead of failing
     if (endCandidates.length === 0) {
-      this.exit('No end candidates found');
+      throw new Error('No end candidates found');
     }
 
     // TODO: Select the first start candidate instead to ensure no conflict within
     if (endCandidates.length > 1) {
-      this.exit('Multiple end candidates found.');
+      throw new Error('Multiple end candidates found.');
     }
 
     const [endCandidate] = endCandidates;
     return endCandidate;
-  }
-
-  exit(/** @type {string} */ message, /** @type {number} */ code = 1) {
-    console.error(message);
-    process.exit(code);
   }
 
   compare(/** @type {string} */ actual, /** @type {string} */ expected, /** @type {string} */ title) {
@@ -342,7 +337,7 @@ export default class MarkRight {
 
     console.log('Actual:  ', this.preview(actual));
     console.log('Expected:', this.preview(expected));
-    this.exit('Text does not match ' + title, 1);
+    throw new Error('Text does not match ' + title, 1);
   }
 
   preview(/** @type {string} */ text) {
