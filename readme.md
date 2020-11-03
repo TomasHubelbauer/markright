@@ -7,10 +7,35 @@
 [![](https://img.shields.io/badge/sponsor-@tomashubelbauer-orange)](https://github.com/sponsors/tomashubelbauer)
 [![](https://img.shields.io/github/v/release/tomashubelbauer/markright)](https://github.com/TomasHubelbauer/markright/releases)
 
-**MarkRight** is a tool for didactic literate programming.
+**MarkRight** is a tool for didactic literate programming. It scans a MarkDown
+document for fenced code blocks and takes action on ones whose info string marks
+a MarkRight action:
 
-It works by processing a MarkDown file to manage files and run commands based on
-its contents in order to (re)produce a program from literate programming source.
+~~~
+```txt hello-world
+Hello, world!
+```
+~~~
+
+This will create a file by the name of `hello-world` with `Hello, world!` for
+content.
+
+~~~
+```sh
+rm hello-world
+```
+~~~
+
+This will run `rm hello-world` and delete the `hello-world` file as a result.
+
+MarkRight treats a MarkDown document as a single source of truth and lets all of
+the other source code base fall out of it, specification and implementation are
+forced to remain synchronized and can never diverge.
+
+MarkRight is intended for use with didactic media (tutorials, documentation, …).
+
+See the [`feature-showcase` example](example/feature-showcase) for a rundown of
+all MarkRight features.
 
 ## Installation
 
@@ -20,8 +45,9 @@ its contents in order to (re)produce a program from literate programming source.
 
 ### Executables
 
-**Windows**, **macOS** and **Linux** executables are available in
-[Releases](https://github.com/TomasHubelbauer/markright/releases/latest).
+Windows, macOS and Linux executables are available in [Releases][releases].
+
+[releases]: https://github.com/TomasHubelbauer/markright/releases/latest
 
 ## Usage
 
@@ -31,37 +57,20 @@ its contents in order to (re)produce a program from literate programming source.
 - `markright watch` (`readme.md`)
 - `markright watch document.md`
 
-## Example
+## Examples
 
-See the [`example`](example) directory.
+See the [`example` directory](example) subdirectories for a variety of examples.
 
 To run MarkRight from source against an example in that directory, run
 `npm start example/${name}` (`markright watch example/${name}`).
 
 To run all examples, run `./test.ps1` (`markright build` on each example).
 
-## Features
-
-See the [`feature-showcase` example](example/feature-showcase) for a rundown of
-MarkRight features.
-
-## Purpose
-
-MarkRight provides a solution for literate programming with focus on didactics,
-which is particularly well served by the fact that the generated content from
-the MarkRight document is overriden each time MarkRight is run which forces the
-document to be a single source of truth and thus always up-to-date. This
-prevents tutorial/documentation/specification from drifting/stale-ing compared
-to the implementation.
+## Source Control
 
 The generated content should still be tracked in source control to ensure it is
 easily accessibly even without running MarkRight to generate it. This is useful
 for source control web UIs and further emphasises the goal of didactic benefit.
-
-## Inspiration
-
-MarkRight is inspired by the concept lab notebooks (lab notes), and later by the
-concept of computer science notebooks we see in data science today.
 
 ## Development
 
@@ -72,7 +81,7 @@ Use `./test.ps1` (`node . build` on each example in `examples`) to see if all
 examples still work as intended. This script is used by the GitHub Actions CI on
 each commit.
 
-### Versioning
+### Changelog
 
 MarkRight is in WIP mode at the moment. The version is `0.0.0` and a release is
 cut for each commit which passes the CI tests. Once MarkRight reaches `1.0`,
@@ -88,10 +97,6 @@ version change and will contain a proper changelog.
   rules (neither is allowed in a fenced code block info string)
 - MarkRight's only supported way of referencing/pulling external assets is thru
   the use of scripts (`mv`, `cp`, `curl`, `wget`, whatever other way…)
-
-## Support
-
-This program is maintained and is of a WIP level of quality and support.
 
 ## License
 
