@@ -56,17 +56,6 @@ void async function () {
     await run(event, fileName);
   }
 
-  // Extract script path and see if it is running within its source code directory
-  const url = new URL(import.meta.url);
-  const srcDirectoryPath = path.normalize(path.dirname(url.pathname.slice(/* file:/// (triple slash…) */ '/'.length)));
-  const cwdDirectoryPath = process.cwd();
-
-  // Watch source code directory if the script is running from within it
-  if (cwdDirectoryPath.startsWith(srcDirectoryPath)) {
-    console.log('Watching MarkRight');
-    fs.watch(srcDirectoryPath, watch);
-  }
-
   // Check and act on CLI action argument
   const action = process.argv[2] || 'build';
   switch (action) {
@@ -75,6 +64,17 @@ void async function () {
       break;
     }
     case 'watch': {
+      // Extract script path and see if it is running within its source code directory
+      const url = new URL(import.meta.url);
+      const srcDirectoryPath = path.normalize(path.dirname(url.pathname.slice(/* file:/// (triple slash…) */ '/'.length)));
+      const cwdDirectoryPath = process.cwd();
+
+      // Watch source code directory if the script is running from within it
+      if (cwdDirectoryPath.startsWith(srcDirectoryPath)) {
+        console.log('Watching MarkRight');
+        fs.watch(srcDirectoryPath, watch);
+      }
+
       // Watch entry document and retry MarkRight
       console.log('Watching', filePath);
       fs.watch(filePath, run);
