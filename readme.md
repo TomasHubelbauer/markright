@@ -238,8 +238,86 @@ Here and there after the initial `npm test` run, when the `readme.me` is changed
 and the `watch` picks it up, the only line printed is `Processed readme.md`, but
 none of the code-blocks have actually run.
 
+### Consider enabling printing stdout/stderr of a long running script out
+
+And maybe budge and also support piping `stdin` of MarkRight to the process to
+make it possible to use interactive scripts.
+
+### Implement checking `stdout` using fenced `sh` code block info string
+
+This will cut down on the visual noise of:
+
+~~~
+```sh
+command
+```
+
+```output
+expected output
+```
+~~~
+
+The above will collapse to:
+
+~~~
+```sh stdout "expected output"
+command
+```
+~~~
+
+### Allow using a regex for `stdout` check to be able to capture optional lines
+
+~~~
+```stdout regex
+(Tool installed!)?\r?\n
+Version: 0.0.0
+```
+~~~
+
+The above will match both:
+
+```
+Tool installed!
+Version: 0.0.0
+```
+
+As well as:
+
+```
+Version: 0.0.0
+```
+
+### Allow marking scripts by the platform they should run on
+
+- `powershell win` runs on Windows, skipped elsewhere
+- `powershell win,linux` runs on Windows and Linux, skipped elsewhere
+- `bash macos` runs on macOS, skipped elsewhere
+
+Authors will have an option to include several scripts, on for each platform,
+and only the correct one for the given platform will be executed.
+
+### Fix fenced code block with just `powershell` for language creating a file
+
+~~~
+```powershell
+yo code `
+  --extensionType command-ts `
+  --extensionDisplayName MarkRight `
+  --extensionName vscode-markright `
+  --extensionDescription "MarkRight support for VS Code" `
+  --gitInit false `
+  --pkgManager npm `
+
+```
+~~~
+
+This fenced code block resulted in a file by the name of `powershell` being
+created, when it should just be skipped instead.
+
 ### Develop a VS Code extension which bundles MarkRight and runs it on `*.md`
 
 The extension would active on MarkDown files in general or maybe on MarkDown
 files which already have MarkRight fenced code blocks and would ask if it
 should watch the file for you and run it each time you save your changes to it.
+
+https://github.com/TomasHubelbauer/markright-vscode
