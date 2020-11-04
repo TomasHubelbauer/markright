@@ -8,17 +8,16 @@
 [![](https://img.shields.io/github/v/release/tomashubelbauer/markright)](https://github.com/TomasHubelbauer/markright/releases)
 
 **MarkRight** is a tool for didactic literate programming. It scans a MarkDown
-document for fenced code blocks and takes action on ones whose info string marks
+document for fenced code blocks and takes action on ones whose info strings mark
 a MarkRight action:
 
 ~~~
-```txt hello-world
-Hello, world!
+```js hello-world.js
+console.log('Hello, world!');
 ```
 ~~~
 
-This will create a file by the name of `hello-world` with `Hello, world!` for
-content.
+This will create a JavaScript file named `hello-world.js`.
 
 ~~~
 ```sh
@@ -26,16 +25,27 @@ rm hello-world
 ```
 ~~~
 
-This will run `rm hello-world` and delete the `hello-world` file as a result.
+This will delete the `hello-world.js` file by running a shell script.
 
 MarkRight treats a MarkDown document as a single source of truth and lets all of
-the other source code base fall out of it, specification and implementation are
-forced to remain synchronized and can never diverge.
+the other source code fall out, specification and implementation are forced to
+remain synchronized and can never diverge.
 
 MarkRight is intended for use with didactic media (tutorials, documentation, …).
 
 See the [`feature-showcase` example](example/feature-showcase) for a rundown of
-all MarkRight features.
+all MarkRight features, e.g.:
+
+- [Create or replace a file](example/feature-showcase#create-or-replace-a-file)
+- [Run a script](example/feature-showcase#run-a-script)
+- [Check file content](example/feature-showcase#check-file-content)
+- [Delete a file](example/feature-showcase#delete-a-file)
+- [Append to a file](example/feature-showcase#append-to-a-file)
+- [Track file name](example/feature-showcase#track-file-name)
+- [Create a file without showing its name](example/feature-showcase#create-a-file-without-showing-its-name)
+- [Insert into a file](example/feature-showcase#insert-into-a-file)
+- [Patch a file](example/feature-showcase#patch-a-file)
+- [Ignore verbatim code blocks](example/feature-showcase#ignore-verbatim-code-blocks)
 
 ## Installation
 
