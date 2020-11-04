@@ -237,3 +237,14 @@ https://stackoverflow.com/q/64670110/2715716
 Here and there after the initial `npm test` run, when the `readme.me` is changed
 and the `watch` picks it up, the only line printed is `Processed readme.md`, but
 none of the code-blocks have actually run.
+
+### Develop a VS Code extension which bundles MarkRight and runs it on `*.md`
+
+The extension would active on MarkDown files in general or maybe on MarkDown
+files which already have MarkRight fenced code blocks and would ask if it
+should watch the file for you and run it each time you save your changes to it.
+
+### Buy a domain name for GitHub Pages (markright.io / markright.tech)?
+
+It's a shame there is no `.document` TLD. I also looked for `.lab` or `.notes`
+for lab notes.
