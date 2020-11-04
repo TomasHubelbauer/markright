@@ -243,8 +243,3 @@ none of the code-blocks have actually run.
 The extension would active on MarkDown files in general or maybe on MarkDown
 files which already have MarkRight fenced code blocks and would ask if it
 should watch the file for you and run it each time you save your changes to it.
-
-### Buy a domain name for GitHub Pages (markright.io / markright.tech)?
-
-It's a shame there is no `.document` TLD. I also looked for `.lab` or `.notes`
-for lab notes.
