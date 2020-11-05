@@ -321,3 +321,16 @@ files which already have MarkRight fenced code blocks and would ask if it
 should watch the file for you and run it each time you save your changes to it.
 
 https://github.com/TomasHubelbauer/markright-vscode
+
+### Allow titling shell code blocks
+
+~~~
+```sh run-a-script
+...
+```
+~~~
+
+In the output of MarkRight this should print:
+`Executed run-a-script shell script`
+
+We need to figure out how to make this work with `stdout` and `stderr` checks.
