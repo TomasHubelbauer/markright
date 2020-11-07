@@ -334,3 +334,13 @@ In the output of MarkRight this should print:
 `Executed run-a-script shell script`
 
 We need to figure out how to make this work with `stdout` and `stderr` checks.
+
+### Add a command line option to erase the directory prior to the run
+
+This will be useful in prototyping as the starting conditions will always be
+known so unexpected states (files conflicting with moves, incorrect versions of
+dependencies being installed etc.) are minimized.
+
+It's always ideal to handle this stuff in the script dynamically, recognize and
+act on the various exceptional conditions, but to aid prototyping, we'll provide
+this quality of life improvement.
