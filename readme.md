@@ -359,3 +359,16 @@ differences are not shown.
 
 Maybe also use the same thing to print preview of file creations, modifications,
 script contents being run etc.
+
+### Offer an option to run in Windows Sandbox by using a shared directory
+
+https://www.ghacks.net/2020/08/09/add-run-in-sandbox-options-on-windows-10
+
+This should generate the WSB file which would share the current directory with
+Windows Sandbox, then boot it up, download MarkRight and run it in the entry
+document. All changes to files would be synced as the directory is shared so at
+the end the host could be just shut down and the artifact of the processing
+would be kept.
+
+As a more general option / an alternative on macOS and Linux, Docker could be
+used in the same way if installed.
