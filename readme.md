@@ -372,3 +372,13 @@ would be kept.
 
 As a more general option / an alternative on macOS and Linux, Docker could be
 used in the same way if installed.
+
+### Add a `node` shell script type which runs Node and tell the version used
+
+Run using:
+
+```sh
+node -e "line 1
+line 2
+line 3"
+```
