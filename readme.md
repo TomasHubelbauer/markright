@@ -344,3 +344,18 @@ dependencies being installed etc.) are minimized.
 It's always ideal to handle this stuff in the script dynamically, recognize and
 act on the various exceptional conditions, but to aid prototyping, we'll provide
 this quality of life improvement.
+
+### Improve the output of failed comparisons and maybe even other bits
+
+If the comparison is between two short lines, show them side by side on the line
+or even just highlight the changes if they are not too big within the line.
+
+If the comparison is between two longer lines, show them one on top of the other
+and consider highlighting changes, too.
+
+If the comparison is between two multi-line strings, indent and print a preview
+of the differences and an ellipsis or maybe some message with how many more
+differences are not shown.
+
+Maybe also use the same thing to print preview of file creations, modifications,
+script contents being run etc.
