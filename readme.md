@@ -382,3 +382,10 @@ node -e "line 1
 line 2
 line 3"
 ```
+
+### Fix the issue with binaries not being found in `%PATH%` when they are
+
+Shell script in MarkDown will not find a newly installed binary in PATH even if
+using another shell script block to force reloading PATH. This is persistent, I
+have not been able to make the binary work across restarts of MarkRight, the IDE
+etc.
