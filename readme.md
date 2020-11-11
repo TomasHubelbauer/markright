@@ -362,13 +362,75 @@ script contents being run etc.
 
 ### Offer an option to run in Windows Sandbox by using a shared directory
 
+Probably by allowing `wsb` as a control keyword in a shell script fenced code
+block info string. For prototyping, `wsb` could be the language tag itself.
+
+#### 1. Create the Windows Sandbox configuration file
+
+Two mapped directories:
+
+1. The directory of the MarkRight entry document
+  - `HostFolder` is the absolute path of the directory with the entry document
+  - `SandboxFolder` is `C:\Users\WDAGUtilityAccount\Desktop\${directoryName}`
+2. A temporary directory with `LogonCommand.cmd` and `LogonCommand.ps1`
+  - `HostFolder` is the absolute path of the temporary directory
+  - `SandboxFolder` is a path in the sandbox, maybe desktop or temporary?
+
+```xml
+<Configuration>
+  <MappedFolders>
+    <MappedFolder>
+      <HostFolder>…</HostFolder>
+      <SandboxFolder>C:\Users\WDAGUtilityAccount\…</SandboxFolder>
+    </MappedFolder>
+    <MappedFolder>
+      <HostFolder>…</HostFolder>
+      <SandboxFolder>C:\Users\WDAGUtilityAccount\Desktop</SandboxFolder>
+    </MappedFolder>
+  </MappedFolders>
+  <LogonCommand>
+    <Command>C:\Users\WDAGUtilityAccount\Desktop\boot.cmd</Command>
+  </LogonCommand>
+</Configuration>
+```
+
+#### 2. Create a temporary directory and place the logon command script in it
+
+This needs to be a Batch script file (CMD) not a PowerShell script file (PS1).
+It not not possible to upgrade it to PowerShell like this either:
+
+```bat
+powershell
+REM Still not PowerShell here
+```
+
+It can however be used to run PowerShell from another file:
+
+```bat
+powershell -noexit "& "".\tst.ps1"""
+```
+
+I tried both relative and absolute paths:
+
+`powershell -noexit "& ""C:\Users\WDAGUtilityAccount\Downloads\tst.ps1"""`
+
+And Windows Sandbox still hasn't run it even though trying a CMD locally that
+calls a PS1 like this works (both relative and absolute). I think there might
+be a PowerShell execution policy issue on the Sandbox. Although I can confirm
+just PowerShell works on it - tested by manually starting Command Prompt on it
+and then executing `powershell` in it.
+
 https://www.ghacks.net/2020/08/09/add-run-in-sandbox-options-on-windows-10
 
-This should generate the WSB file which would share the current directory with
-Windows Sandbox, then boot it up, download MarkRight and run it in the entry
-document. All changes to files would be synced as the directory is shared so at
-the end the host could be just shut down and the artifact of the processing
-would be kept.
+https://docs.microsoft.com/en-us/windows/security/threat-protection/windows-sandbox/windows-sandbox-configure-using-wsb-file
+
+https://github.com/microsoft/Windows-Sandbox-Utilities
+
+#### 3. Download and execute Node and MarkRight
+
+#### 4. Keep the changes made by MarkRight from sandbox to the shared directory
+
+#### Docker
 
 As a more general option / an alternative on macOS and Linux, Docker could be
 used in the same way if installed.
