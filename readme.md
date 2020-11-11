@@ -389,3 +389,7 @@ Shell script in MarkDown will not find a newly installed binary in PATH even if
 using another shell script block to force reloading PATH. This is persistent, I
 have not been able to make the binary work across restarts of MarkRight, the IDE
 etc.
+
+Perhaps MarkRight should explicitly set path each time it runs a shell script
+(can this be done?) and check the path when a script ends and make sure that
+newly added entries are sent to the new script block.
