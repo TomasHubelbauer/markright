@@ -42,39 +42,23 @@ void async function () {
 </Configuration>
 `);
 
-  // TODO: Download MarkRight binary and run it not Node and MarkRight NPM
-  // TODO: Use source version of MarkRight when in source version mode
-  // (either pre-build the MarkRight binary or download Node and run MarkRight)
+  // TODO: Download Node and mount and run source version if source watch mode
+  // TODO: Download binary for the correct platform or maybe mount host binary
+  // (this would ensure that sandbox MR is the same version as host MR)
   const filePath = path.join(tempDirectoryPath, 'markright.ps1');
   await fs.promises.writeFile(filePath, `
-$response = Invoke-WebRequest -UseBasicParsing https://nodejs.org/en/download
-if ($response.Content -notmatch "Latest LTS Version: <strong>(?<version>\\d+.\\d+.\\d+)<\\/strong>") {
-  throw "Could not parse out latest LTS version from https://nodejs.org/en/download"
-}
+echo "Downloading MarkRight"
 
-$version = $matches.version
-$name = "node-$version.msi"
-if (Test-Path $name) {
-  # Use the cached version (this is for testing, never happens in the sandbox)
-}
-else {
-  echo "Downloading $name"
-  Invoke-WebRequest https://nodejs.org/dist/v\${version}/node-v\${version}-x64.msi -OutFile $name
-}
+# Speed up the download to human speeds
+$ProgressPreference = 'SilentlyContinue'
+Invoke-WebRequest https://github.com/TomasHubelbauer/markright/releases/latest/download/markright-win.exe -OutFile markright.exe
 
-echo "Installing $name"
-msiexec /passive /log "\${name}.log" /package $name
-Wait-Process msiexec
+cd C:\\Users\\WDAGUtilityAccount\\Desktop\\${directoryName}
 
-echo "Adding Node and NPM to %PATH%"
-$env:Path += ";C:\\Program Files\\nodejs"
-
-node -v
-npm -v
-echo "Done"
+# Note that C:\\Windows\\system32 is already in %PATH% so we can just invoke:
+markright
 `);
 
-  // TODO: Make the sandbox self-close after having run the script
   const exitCode = await new Promise(async (resolve, reject) => {
     // Note that this relies on Windows Sandbox being a singleton process as enforced by Windows
     const cp = await child_process.exec(`powershell -command "windowssandbox ${wsbFilePath}; wait-process windowssandbox"`);
