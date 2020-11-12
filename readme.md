@@ -392,3 +392,7 @@ etc.
 Perhaps MarkRight should explicitly set path each time it runs a shell script
 (can this be done?) and check the path when a script ends and make sure that
 newly added entries are sent to the new script block.
+
+### Allow running the whole MarkRight document execution in Windows Sandbox
+
+In addition to running individual script blocks this way.

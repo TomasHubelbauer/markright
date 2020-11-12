@@ -37,7 +37,7 @@ void async function () {
     </MappedFolder>
   </MappedFolders>
   <LogonCommand>
-    <Command>C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -executionpolicy unrestricted -command "C:\\Users\\WDAGUtilityAccount\\AppData\\Local\\Temp\\markright\\markright.ps1"</Command>
+    <Command>C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -executionpolicy unrestricted -command "start powershell {-noexit -nologo -file C:\\Users\\WDAGUtilityAccount\\AppData\\Local\\Temp\\markright\\markright.ps1}"</Command>
   </LogonCommand>
 </Configuration>
 `);
@@ -45,11 +45,33 @@ void async function () {
   // TODO: Download MarkRight binary and run it not Node and MarkRight NPM
   // TODO: Use source version of MarkRight when in source version mode
   // (either pre-build the MarkRight binary or download Node and run MarkRight)
-  // TODO: See if it is possible to show and keep open the PowerShell window
-  // https://stackoverflow.com/q/64795150/2715716
   const filePath = path.join(tempDirectoryPath, 'markright.ps1');
   await fs.promises.writeFile(filePath, `
-explorer .
+$response = Invoke-WebRequest -UseBasicParsing https://nodejs.org/en/download
+if ($response.Content -notmatch "Latest LTS Version: <strong>(?<version>\\d+.\\d+.\\d+)<\\/strong>") {
+  throw "Could not parse out latest LTS version from https://nodejs.org/en/download"
+}
+
+$version = $matches.version
+$name = "node-$version.msi"
+if (Test-Path $name) {
+  # Use the cached version (this is for testing, never happens in the sandbox)
+}
+else {
+  echo "Downloading $name"
+  Invoke-WebRequest https://nodejs.org/dist/v\${version}/node-v\${version}-x64.msi -OutFile $name
+}
+
+echo "Installing $name"
+msiexec /passive /log "\${name}.log" /package $name
+Wait-Process msiexec
+
+echo "Adding Node and NPM to %PATH%"
+$env:Path += ";C:\\Program Files\\nodejs"
+
+node -v
+npm -v
+echo "Done"
 `);
 
   // TODO: Make the sandbox self-close after having run the script
