@@ -1,11 +1,12 @@
 # MarkRight
 
-[![](https://img.shields.io/github/stars/tomashubelbauer/markright)](https://github.com/TomasHubelbauer/markright/stargazers)
-[![](https://img.shields.io/github/issues/TomasHubelbauer/markright)](https://github.com/TomasHubelbauer/markright/stargazers)
-[![](https://img.shields.io/github/forks/TomasHubelbauer/markright)](https://github.com/TomasHubelbauer/markright/network/members)
+[![](https://github.com/tomashubelbauer/markright/workflows/ci_cd/badge.svg)](https://github.com/tomashubelbauer/markright/actions)
+[![](https://img.shields.io/github/stars/tomashubelbauer/markright)](https://github.com/tomashubelbauer/markright/stargazers)
+[![](https://img.shields.io/github/issues/tomashubelbauer/markright)](https://github.com/tomashubelbauer/markright/stargazers)
+[![](https://img.shields.io/github/forks/tomashubelbauer/markright)](https://github.com/tomashubelbauer/markright/network/members)
 [![](https://img.shields.io/github/license/tomashubelbauer/markright)](license.md)
 [![](https://img.shields.io/badge/sponsor-@tomashubelbauer-orange)](https://github.com/sponsors/tomashubelbauer)
-[![](https://img.shields.io/github/v/release/tomashubelbauer/markright)](https://github.com/TomasHubelbauer/markright/releases)
+[![](https://img.shields.io/github/v/release/tomashubelbauer/markright)](https://github.com/tomashubelbauer/markright/releases)
 
 **MarkRight** is a tool for didactic literate programming. It scans a MarkDown
 document for fenced code blocks and takes action on ones whose info strings mark
@@ -57,7 +58,7 @@ all MarkRight features, e.g.:
 
 Windows, macOS and Linux executables are available in [Releases][releases].
 
-[releases]: https://github.com/TomasHubelbauer/markright/releases/latest
+[releases]: https://github.com/tomashubelbauer/markright/releases/latest
 
 ## Usage
 
@@ -228,7 +229,7 @@ but I don't want MarkRight to be interactive this way. Instead, users should use
 code blocks to generated files expected by the process they ran so it doesn't
 need to ask for anything at `stdin`.
 
-https://github.com/TomasHubelbauer/node-stdio
+https://github.com/tomashubelbauer/node-stdio
 
 ### Fix changes in the document picked out by the watcher resulting in empty run
 
@@ -318,7 +319,7 @@ The extension would active on MarkDown files in general or maybe on MarkDown
 files which already have MarkRight fenced code blocks and would ask if it
 should watch the file for you and run it each time you save your changes to it.
 
-https://github.com/TomasHubelbauer/markright-vscode
+https://github.com/tomashubelbauer/markright-vscode
 
 ### Allow titling shell code blocks
 
