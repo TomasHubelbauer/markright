@@ -243,6 +243,11 @@ export default class MarkRight {
     console.log('Verified stderr match');
   }
 
+  // TODO: Finalize this based on wsb.js
+  async run_wsb(/** @type {string} */ code, /** @type {string} */ text) {
+    throw new Error('WSB is not implemented yet.');
+  }
+
   async run_patch(/** @type {string} */ fileName, /** @type {string} */ text) {
     await this.file(fileName + '!', text);
   }
