@@ -14,7 +14,7 @@ jobs:
       - run: |
           Set-PSDebug -Trace 1
           $ErrorActionPreference = "Stop"
-          ./test.ps1
+          node test
           node transpile
           npx pkg .
       - run: echo "::set-output name=date::$(date -Is | cut -b -19 | sed 's/[:T\]/-/g')"

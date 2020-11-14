@@ -6,7 +6,8 @@
   "bin": "index.js",
   "type": "module",
   "scripts": {
-    "test": "node . watch example/feature-showcase",
+    "dev": "node . watch example/feature-showcase",
+    "test": "node test",
     "start": "node . watch"
   }
 }

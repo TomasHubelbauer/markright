@@ -74,8 +74,6 @@ See the [`example` directory](example) subdirectories for a variety of examples.
 To run MarkRight from source against an example in that directory, run
 `npm start example/${name}` (`markright watch example/${name}`).
 
-To run all examples, run `./test.ps1` (`markright build` on each example).
-
 ## Source Control
 
 The generated content should still be tracked in source control to ensure it is
@@ -84,12 +82,12 @@ for source control web UIs and further emphasises the goal of didactic benefit.
 
 ## Development
 
-In development, use `npm test` (`node . watch features/feature-showcase`) to run
-the feature showcase example which also works as a features test harness.
+Run `npm run dev` to run the `example/feature-showcase` document which contains
+all features.
 
-Use `./test.ps1` (`node . build` on each example in `examples`) to see if all
-examples still work as intended. This script is used by the GitHub Actions CI on
-each commit.
+Run `npm test` to run all `*.test.js` modules as well as all `example` directory
+documents. Run `npm test ${regex}` to run only matching `*.test.js` modules and
+no `example` directory documents.
 
 ### Changelog
 
