@@ -396,3 +396,26 @@ newly added entries are sent to the new script block.
 ### Allow running the whole MarkRight document execution in Windows Sandbox
 
 In addition to running individual script blocks this way.
+
+### Allow inspecting the standard output of any script usign `markright stdout`
+
+Once titling scripts is implemented, add this command which will print the last
+stdout known for this script based on a cache where all stdout will be stored.
+Maybe we should require MarkRight be run with `--cache` or similar to tell it to
+do cache the stdout (stdio?) data to avoid surprising behavior with potentially
+giant caches.
+
+### Check that the language tag is a-z0-9 and pull impl from `lang/${tag}`
+
+Pull out the various implementations from a module file using `await import` and
+error/fallback if they don't exist like is done currently.
+
+### Allow a script to be both executed and output to a file at once
+
+Currently it is one or the other.
+
+### Add a generalized parameter support to the info text
+
+Syntax like `title Test param true label "string content" stdout "expected..."`
+could be supported so that we could enable some of the other todos, like the one
+for supporting inline stdout/stderr validation etc.
