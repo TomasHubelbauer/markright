@@ -197,6 +197,7 @@ export default class MarkRight {
       text = 'powershell ' + tempPath;
     }
 
+    // TODO: Use `exec.js` instead once fully ironed out
     try {
       const process = await util.promisify(child_process.exec)(text);
       this.stdout = process.stdout;
@@ -209,6 +210,7 @@ export default class MarkRight {
       this.exitCode = error.code;
     }
 
+    // TODO: Implement titling blocks or preview the script content for a title
     console.log('Executed shell script');
   }
 

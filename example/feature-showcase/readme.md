@@ -163,3 +163,27 @@ Some other content
 ~~~
 
 The above is the exact MarkDown syntax of a file match check (of the last file).
+
+### Throwing on interactive scripts
+
+~~~
+```sh
+time
+```
+~~~
+
+A script like this will prompt the user for input. MarkRight doesn't support
+interactivity this way, because the input provided would not be captured as a
+part of the document and this would deviate from the idea of the MarkRight
+document being the single source of truth.
+
+We are considering providing ways of passing messages to processes to control
+them by providing the messages in the document using a `stdin` code block, but
+that's not in the works yet.
+
+At the moment a code block like this simply errors to let you know the script is
+expecting user input which we don't support. The document author should find a
+way to pass all the necessary information for the document a different way, like
+using config files, passing CLI switches of piping files to the process' stdin.
+
+**Note:** This is currently in development and turned on yet. Stay tuned.
