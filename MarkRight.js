@@ -2,7 +2,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import util from 'util';
-import child_process from 'child_process';
+import exec from './exec.js';
 
 export default class MarkRight {
   constructor(/** @type {string} */ filePath) {
@@ -197,18 +197,10 @@ export default class MarkRight {
       text = 'powershell ' + tempPath;
     }
 
-    // TODO: Use `exec.js` instead once fully ironed out
-    try {
-      const process = await util.promisify(child_process.exec)(text);
-      this.stdout = process.stdout;
-      this.stderr = process.stderr;
-      this.exitCode = 0;
-    }
-    catch (error) {
-      this.stdout = error.stdout;
-      this.stderr = error.stderr;
-      this.exitCode = error.code;
-    }
+    const { exitCode, stdout, stderr } = await exec(text);
+    this.exitCode = exitCode;
+    this.stdout = stdout;
+    this.stderr = stderr;
 
     // TODO: Implement titling blocks or preview the script content for a title
     console.log('Executed shell script');
