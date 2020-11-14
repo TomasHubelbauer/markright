@@ -230,7 +230,7 @@ but I don't want MarkRight to be interactive this way. Instead, users should use
 code blocks to generated files expected by the process they ran so it doesn't
 need to ask for anything at `stdin`.
 
-https://stackoverflow.com/q/64670110/2715716
+https://github.com/TomasHubelbauer/node-stdio
 
 ### Fix changes in the document picked out by the watcher resulting in empty run
 
@@ -382,7 +382,7 @@ line 2
 line 3"
 ```
 
-### Fix the issue with binaries not being found in `%PATH%` when they are
+### Fix the issue with binaries not being found in `%PATH%` when they are there
 
 Shell script in MarkDown will not find a newly installed binary in PATH even if
 using another shell script block to force reloading PATH. This is persistent, I
