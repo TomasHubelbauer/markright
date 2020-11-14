@@ -4,7 +4,7 @@ import fs from 'fs';
 import util from 'util';
 import child_process from 'child_process';
 
-// TODO: Provide this as a standalone function and return stdour and stderr based on the transcript
+// TODO: Replace with https://github.com/TomasHubelbauer/node-wsb
 void async function () {
   const directoryPath = process.cwd();
   const directoryName = path.basename(directoryPath);
