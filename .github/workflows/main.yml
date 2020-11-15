@@ -53,3 +53,15 @@ jobs:
           asset_path: markright-win.exe
           asset_name: markright-win.exe
           asset_content_type: application/octet-stream
+      - run: |
+          git add package.json
+          git checkout -- .
+          if git diff-index --quiet HEAD --; then
+            exit
+          fi
+
+          git config --global user.email "tomas@hubelbauer.net"
+          git config --global user.name "Tomas Hubelbauer"
+          git commit -m "Bump version"
+          git pull --rebase
+          git push
