@@ -1,0 +1,3 @@
+[submodule "node-wsb"]
+	path = node-wsb
+	url = https://github.com/tomashubelbauer/node-wsb

@@ -43,4 +43,7 @@ void async function () {
       console.log(directoryName, error);
     }
   }
+
+  // TODO: Get rid of this once we figure out how to prevent `node-wsb` from dangling
+  process.exit(0);
 }()

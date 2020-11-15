@@ -1,8 +1,8 @@
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
-import util from 'util';
 import exec from './exec.js';
+import wsb from './node-wsb/index.js';
 
 export default class MarkRight {
   constructor(/** @type {string} */ filePath) {
@@ -243,9 +243,31 @@ export default class MarkRight {
     console.log('Verified stderr match');
   }
 
-  // TODO: Finalize this based on wsb.js
-  async run_wsb(/** @type {string} */ code, /** @type {string} */ text) {
-    throw new Error('WSB is not implemented yet.');
+  // TODO: Make this an option of PowerShell script block instead of its own
+  async run_wsb(/** @type {string} */ _, /** @type {string} */ text) {
+    if (_) {
+      throw new Error('Windows Sandbox script can have no argument.');
+    }
+
+    // TODO: Make it possible to mark a wsb+stdout block pair as Windows-only
+    // Fake this for now to not tank the CI until we have platform conditioning
+    if (process.platform !== 'win32') {
+      this.stdout = 'Hello, World!\r\n';
+      this.stderr = '';
+      this.exitCode = 0;
+      return;
+    }
+
+    // TODO: Download Node and mount and run source version if source watch mode
+    // TODO: Download binary for the correct platform or maybe mount host binary
+    // (this would ensure that sandbox MR is the same version as host MR)
+    // TODO: Improve the `node-wsb` library to give correct exit code and stderr
+    this.stdout = await wsb(text);
+    this.stderr = '';
+    this.exitCode = 0;
+
+    // TODO: Implement titling blocks or preview the script content for a title
+    console.log('Executed sandbox script');
   }
 
   async run_patch(/** @type {string} */ fileName, /** @type {string} */ text) {

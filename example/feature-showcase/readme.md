@@ -164,7 +164,7 @@ Some other content
 
 The above is the exact MarkDown syntax of a file match check (of the last file).
 
-### Throwing on interactive scripts
+### Shutting down interactive scripts
 
 ~~~
 ```sh
@@ -177,13 +177,23 @@ interactivity this way, because the input provided would not be captured as a
 part of the document and this would deviate from the idea of the MarkRight
 document being the single source of truth.
 
-We are considering providing ways of passing messages to processes to control
-them by providing the messages in the document using a `stdin` code block, but
-that's not in the works yet.
+MarkRight will reply to any prompts raised with no value. How the process reacts
+to this differs from process to process. Interactive scripts can be used in MR
+as long as the document author takes into an account MarkRight will behave this
+way. We recommend passing in information a different way, e.g.: CLI switches,
+I/O redirection, configuration files etc.
 
-At the moment a code block like this simply errors to let you know the script is
-expecting user input which we don't support. The document author should find a
-way to pass all the necessary information for the document a different way, like
-using config files, passing CLI switches of piping files to the process' stdin.
+### Windows Sandbox scripts
 
-**Note:** This is currently in development and turned on yet. Stay tuned.
+Use `wsb` for the language tag to run a PowerShell script in Windows Sandbox.
+
+```wsb
+echo "Hello, World!"
+```
+
+```stdout
+Hello, World!
+```
+
+**Note:** This is likely to become an option of the PowerShell fenced code block
+in the future instead of being its own block.
