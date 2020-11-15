@@ -54,6 +54,9 @@ all MarkRight features, e.g.:
 
 `npm i -g tomashubelbauer/markright`
 
+You might need to run `git submodule update --recursive --init` to install the
+dependencies.
+
 ### Executables
 
 Windows, macOS and Linux executables are available in [Releases][releases].

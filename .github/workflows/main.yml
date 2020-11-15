@@ -14,6 +14,7 @@ jobs:
       - run: |
           Set-PSDebug -Trace 1
           $ErrorActionPreference = "Stop"
+          git submodule update --recursive --init
           node test
           npm version patch
           node transpile
@@ -54,6 +55,7 @@ jobs:
           asset_name: markright-win.exe
           asset_content_type: application/octet-stream
       - run: |
+          npm view markright version
           git add package.json
           git checkout -- .
           if git diff-index --quiet HEAD --; then
