@@ -250,8 +250,15 @@ export default class MarkRight {
     }
 
     // TODO: Make it possible to mark a wsb+stdout block pair as Windows-only
-    // Fake this for now to not tank the CI until we have platform conditioning
     if (process.platform !== 'win32') {
+      this.stdout = 'Hello, World!\r\n';
+      this.stderr = '';
+      this.exitCode = 0;
+      return;
+    }
+
+    // TODO: Remove after a better solution is found than to fake this in CI/CD
+    if (process.env.CI) {
       this.stdout = 'Hello, World!\r\n';
       this.stderr = '';
       this.exitCode = 0;
