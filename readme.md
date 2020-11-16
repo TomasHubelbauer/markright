@@ -118,6 +118,8 @@ MarkRight is licensed under the terms of the [AGPL 3.0only](license.md) license.
 
 ### Address code to-do comments
 
+Use [`todo`](https://github.com/tomashubelbauer/todo).
+
 ### Cache the unchanged layers
 
 Do not run the whole document each time, recognize the changed part (usually the
