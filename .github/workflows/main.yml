@@ -14,11 +14,35 @@ jobs:
       - run: |
           Set-PSDebug -Trace 1
           $ErrorActionPreference = "Stop"
+
+          # Configure Git identity here already as `npm version` needs it
+          git config --global user.email "tomas@hubelbauer.net"
+          git config --global user.name "Tomas Hubelbauer"
+          
           npm version patch
+          if (-not $?) {
+            throw "Failed to run npm version"
+          }
+
           git submodule update --recursive --init
+          if (-not $?) {
+            throw "Failed to run git submodule update"
+          }
+
           node test
+          if (-not $?) {
+            throw "Failed to run node test"
+          }
+
           node transpile
+          if (-not $?) {
+            throw "Failed to run node transpile"
+          }
+
           npx pkg . --debug
+          if (-not $?) {
+            throw "Failed to run pkg"
+          }
       - run: echo "::set-output name=version::$(npm view markright version)"
         id: version
       - uses: actions/create-release@v1
@@ -62,8 +86,6 @@ jobs:
             exit
           fi
 
-          git config --global user.email "tomas@hubelbauer.net"
-          git config --global user.name "Tomas Hubelbauer"
           git commit -m "Bump version"
           git pull --rebase
           git push
