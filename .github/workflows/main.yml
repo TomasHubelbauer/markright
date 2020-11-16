@@ -14,11 +14,11 @@ jobs:
       - run: |
           Set-PSDebug -Trace 1
           $ErrorActionPreference = "Stop"
+          npm version patch
           git submodule update --recursive --init
           node test
-          npm version patch
           node transpile
-          npx pkg .
+          npx pkg . --debug
       - run: echo "::set-output name=version::$(npm view markright version)"
         id: version
       - uses: actions/create-release@v1
