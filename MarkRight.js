@@ -1,15 +1,11 @@
 import fs from 'fs';
-import os from 'os';
-import path from 'path';
 import exec from './exec.js';
 import wsb from './node-wsb/index.js';
+import assert from 'assert';
 
 export default class MarkRight {
   constructor(/** @type {string} */ filePath) {
     this.filePath = filePath;
-
-    // The length of text to preview when printing actual/expected comparisons
-    this.threshold = 80;
   }
 
   async run() {
@@ -123,7 +119,7 @@ export default class MarkRight {
   }
 
   file_match(/** @type {string} */ fileText, /** @type {string} */ text) {
-    this.compare(fileText, text, this.fileName);
+    this.compare(fileText, text);
     console.log('Matched', this.fileName);
   }
 
@@ -184,23 +180,14 @@ export default class MarkRight {
     return fileLines.join('\n');
   }
 
-  // TODO: Add support for running in a specific shell (sh, bash, posh, …)
+  // TODO: Add support for running in a given shell (sh, bash, posh, …) thru `_`
   async run_sh(/** @type {string} */ _, /** @type {string} */ text) {
     if (_) {
       throw new Error('Shell script can have no argument.');
     }
 
-    // TODO: Use an OS-appropriate shell here
-    if (/\n[^$]/.test(text)) {
-      const tempPath = path.join(os.tmpdir(), 'markright.ps1');
-      await fs.promises.writeFile(tempPath, text);
-      text = 'powershell ' + tempPath;
-    }
-
-    const { exitCode, stdout, stderr } = await exec(text);
-    this.exitCode = exitCode;
-    this.stdout = stdout;
-    this.stderr = stderr;
+    // TODO: Use an OS-appropriate shell instead of always PowerShell
+    this.stdio = await exec(text, 'powershell');
 
     // TODO: Implement titling blocks or preview the script content for a title
     console.log('Executed shell script');
@@ -211,16 +198,16 @@ export default class MarkRight {
       throw new Error('Stdout check can have no argument.');
     }
 
-    if (this.exitCode === undefined) {
+    if (this.stdio === undefined) {
       throw new Error('Cannot check process stream before running a script!');
     }
 
-    if (this.exitCode !== 0) {
-      console.error(this.stderr);
+    if (this.stdio.exitCode !== 0) {
+      console.error(this.stdio.stderr);
       throw new Error('Exit code is not zero.');
     }
 
-    this.compare(this.stdout, text, 'stdout');
+    this.compare(this.stdio.stdout, text);
     console.log('Verified stdout match');
   }
 
@@ -230,16 +217,16 @@ export default class MarkRight {
       throw new Error('Stderr check argument must be a number if present.');
     }
 
-    if (this.exitCode === undefined) {
+    if (this.stdio === undefined) {
       throw new Error('Cannot check process stream before running a script!');
     }
 
-    if (code !== undefined && this.exitCode !== exitCode) {
-      console.error(this.stderr);
+    if (code !== undefined && this.stdio.exitCode !== exitCode) {
+      console.error(this.stdio.stderr);
       throw new Error(`Exit code is not ${exitCode}.`);
     }
 
-    this.compare(this.stderr, text, 'stderr');
+    this.compare(this.stdio.stderr, text);
     console.log('Verified stderr match');
   }
 
@@ -249,29 +236,18 @@ export default class MarkRight {
       throw new Error('Windows Sandbox script can have no argument.');
     }
 
-    // TODO: Make it possible to mark a wsb+stdout block pair as Windows-only
-    if (process.platform !== 'win32') {
-      this.stdout = 'Hello, World!\r\n';
-      this.stderr = '';
-      this.exitCode = 0;
-      return;
-    }
-
-    // TODO: Remove after a better solution is found than to fake this in CI/CD
+    // TODO: Detect WSB unavailable by checking for it instead of the CI/CD flag
+    // TODO: Change this to call `run_posh` to ensure correct shell is used (PS)
+    // Run in PowerShell in case Windows Sandbox is detected unavailable
     if (process.env.CI) {
-      this.stdout = 'Hello, World!\r\n';
-      this.stderr = '';
-      this.exitCode = 0;
+      await this.run_sh('', text);
       return;
     }
 
     // TODO: Download Node and mount and run source version if source watch mode
     // TODO: Download binary for the correct platform or maybe mount host binary
     // (this would ensure that sandbox MR is the same version as host MR)
-    // TODO: Improve the `node-wsb` library to give correct exit code and stderr
-    this.stdout = await wsb(text);
-    this.stderr = '';
-    this.exitCode = 0;
+    this.stdio = await wsb(text);
 
     // TODO: Implement titling blocks or preview the script content for a title
     console.log('Executed sandbox script');
@@ -343,18 +319,7 @@ export default class MarkRight {
     return endCandidate;
   }
 
-  compare(/** @type {string} */ actual, /** @type {string} */ expected, /** @type {string} */ title) {
-    actual = actual.replace(/\r\n/g, '\n');
-    if (actual === expected) {
-      return;
-    }
-
-    console.log('Actual:  ', this.preview(actual));
-    console.log('Expected:', this.preview(expected));
-    throw new Error('Text does not match ' + title, 1);
-  }
-
-  preview(/** @type {string} */ text) {
-    return `${JSON.stringify(text.slice(0, this.threshold))}${text.length > this.threshold ? '…' : ''} (${text.match(/\n/g)?.length || 0} lines, ${text.length} chars)`;
+  compare(/** @type {string} */ actual, /** @type {string} */ expected) {
+    assert.strictEqual(actual.replace(/\r\n/g, '\n'), expected);
   }
 }

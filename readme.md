@@ -78,6 +78,7 @@ for source control web UIs and further emphasises the goal of didactic benefit.
 ## Limitations
 
 - MarkRight converts CRLF in file text into LF for easier internal processing
+- MarkRight assumes all text files it is fed are UTF-8 without BOM without check
 - MarkRight reserves `?` and `!` at the end of file names for action modifiers
 - MarkRight reserves `_` as a placeholder file name, won't use `_` name verbatim
 - MarkRight can't output `~` and `` ` `` into file names due to MarkDown syntax

@@ -1,8 +1,8 @@
 import child_process from 'child_process';
 import stream from 'stream';
 
-export default async function exec(/** @type {string} */ command) {
-  const process = child_process.exec(command);
+export default async function exec(/** @type {string} */ command, /** @type {string} */ shell = 'powershell') {
+  const process = child_process.exec(command, { shell });
 
   // Reply to process prompts with nothing to shut the prompts down and error
   /** @this {process.Readable} */

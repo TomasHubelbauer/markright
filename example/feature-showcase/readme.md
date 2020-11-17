@@ -21,13 +21,14 @@ already existed.
 To run any arbitrary (even multi-line) script, use a `sh` fenced code block:
 
 ```sh
-echo Script test > test
+# Note that PowerShell uses UTF-16 by default which MarkRight doesn't support
+"Script test" | Out-File -Encoding ASCII test
 ```
 
 ### Check file content
 
 ```?
-Script test 
+Script test
 ```
 
 The `test` file will be checked to see if it really contains the same content as
