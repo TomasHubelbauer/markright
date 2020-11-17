@@ -1,6 +1,6 @@
 {
   "name": "markright",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "license": "AGPL-3.0-only",
   "repository": "tomashubelbauer/markright",
   "bin": "index.js",
