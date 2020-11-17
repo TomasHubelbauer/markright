@@ -34,21 +34,10 @@ MarkRight treats a MarkDown document as a single source of truth and lets all of
 the other source code fall out, specification and implementation are forced to
 remain synchronized and can never diverge.
 
+See the [**`feature-showcase` example**](example/feature-showcase) for a rundown
+of all MarkRight features.
+
 MarkRight is intended for use with didactic media (tutorials, documentation, …).
-
-See the [`feature-showcase` example](example/feature-showcase) for a rundown of
-all MarkRight features, e.g.:
-
-- [Create or replace a file](example/feature-showcase#create-or-replace-a-file)
-- [Run a script](example/feature-showcase#run-a-script)
-- [Check file content](example/feature-showcase#check-file-content)
-- [Delete a file](example/feature-showcase#delete-a-file)
-- [Append to a file](example/feature-showcase#append-to-a-file)
-- [Track file name](example/feature-showcase#track-file-name)
-- [Create a file without showing its name](example/feature-showcase#create-a-file-without-showing-its-name)
-- [Insert into a file](example/feature-showcase#insert-into-a-file)
-- [Patch a file](example/feature-showcase#patch-a-file)
-- [Ignore verbatim code blocks](example/feature-showcase#ignore-verbatim-code-blocks)
 
 ## Installation
 
