@@ -198,3 +198,27 @@ Hello, World!
 
 **Note:** This is likely to become an option of the PowerShell fenced code block
 in the future instead of being its own block.
+
+### Run a script and verify its standard I/O streams in one code block
+
+~~~
+```sh { "stdout": "Hello, world!" }
+echo "Hello, world!"
+```
+~~~
+
+Shell script code blocks accept a JSON object with options. Using `stdout` will
+make sure that after the script is run, its standard output will be checked the
+same way as if we used this other code block right after:
+
+~~~
+```stdout
+Hello, world!
+```
+~~~
+
+The same is true of `stderr` (and we can optionally also check `exitCode` here).
+
+```sh { "stdout": "Hello, world!\n" }
+echo "Hello, world!"
+```

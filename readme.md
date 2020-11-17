@@ -133,12 +133,10 @@ the generated files and only "translate" the cursor in the code block to the
 backing content in the generated file so that things like modules work (VS Code
 knows what to suggest for module paths etc.).
 
-#### Consider allowing shell code blocks to check streams in info string
+#### Use a more concise syntax for shell code block info string options
 
-Instead of following each shell code block with `stdout` and `stderr`, add an
-option to specify the expected stdout and stderr in the shell code block info
-string. This way we can still test the streams and exit code, but we can do it
-non-visually too, for cases where that's more appropriate. E.g.:
+Right now the options are in JSON, which is verbose, we could get something more
+tailored and concise.
 
 ~~~
 ```sh 0 "Hello, world!"
@@ -166,12 +164,7 @@ node .
 
 To check both stdout and stderr at the same time.
 
-And maybe it could be allowed to pass in regular expressions instead in case
-things like file names, dates or random numbers are involved. This could also
-enable multi-line checks which while they should really go into their own stream
-check block, could be done in the shell script block too.
-
-#### Consider allowing regex pre-processing in stream check blocks
+#### Consider allowing regex pre-processing in standard I/O checks
 
 This would be useful for normalizing things like file system  paths, dates and
 random numbers in the output. E.g.:
@@ -181,6 +174,8 @@ random numbers in the output. E.g.:
 Your random number is: {random number}.
 ```
 ~~~
+
+Also applies to the inline standard I/O checks in shell code block options.
 
 #### Support mixed `+` and `-` in patch and support unchanged lines in patch
 
@@ -220,17 +215,6 @@ curl -L https://github.com/electron/rcedit/releases/latest/download/rcedit-x64.e
 I get the above error while running the executable. Before applying the icon,
 the executable works just fine.
 
-#### Catch `stdin` expectation in scripts where possible and probably error on it
-
-If a process spawned as a result of MarkRight encountering a script block is
-trying to read from `stdin`, detect that and throw an error. There is no useful
-way MarkRight could provide to the `stdin` other than piping its own `stdin` in,
-but I don't want MarkRight to be interactive this way. Instead, users should use
-code blocks to generated files expected by the process they ran so it doesn't
-need to ask for anything at `stdin`.
-
-https://github.com/tomashubelbauer/node-stdio
-
 #### Fix changes in the document picked out by the watcher resulting in empty run
 
 Here and there after the initial `npm test` run, when the `readme.me` is changed
@@ -238,31 +222,6 @@ and the `watch` picks it up, the only line printed is `Processed readme.md`, but
 none of the code-blocks have actually run.
 
 #### Consider enabling printing stdout/stderr of a long running script out
-
-And maybe budge and also support piping `stdin` of MarkRight to the process to
-make it possible to use interactive scripts.
-
-#### Implement checking `stdout` using fenced `sh` code block info string
-
-This will cut down on the visual noise of:
-
-~~~
-```sh
-command
-```
-
-```output
-expected output
-```
-~~~
-
-The above will collapse to:
-
-~~~
-```sh stdout "expected output"
-command
-```
-~~~
 
 #### Allow using a regex for `stdout` check to be able to capture optional lines
 
@@ -344,21 +303,6 @@ It's always ideal to handle this stuff in the script dynamically, recognize and
 act on the various exceptional conditions, but to aid prototyping, we'll provide
 this quality of life improvement.
 
-#### Improve the output of failed comparisons and maybe even other bits
-
-If the comparison is between two short lines, show them side by side on the line
-or even just highlight the changes if they are not too big within the line.
-
-If the comparison is between two longer lines, show them one on top of the other
-and consider highlighting changes, too.
-
-If the comparison is between two multi-line strings, indent and print a preview
-of the differences and an ellipsis or maybe some message with how many more
-differences are not shown.
-
-Maybe also use the same thing to print preview of file creations, modifications,
-script contents being run etc.
-
 #### Offer an option to run in Windows Sandbox by using a shared directory
 
 Probably by allowing `wsb` as a control keyword in a shell script fenced code
@@ -381,6 +325,8 @@ line 2
 line 3"
 ```
 
+Maybe `node` can be passed to `shell` in `child_process.exec`?
+
 #### Fix the issue with binaries not being found in `%PATH%` when they are there
 
 Shell script in MarkDown will not find a newly installed binary in PATH even if
@@ -394,9 +340,9 @@ newly added entries are sent to the new script block.
 
 #### Allow running the whole MarkRight document execution in Windows Sandbox
 
-In addition to running individual script blocks this way.
+In addition to running individual script blocks this way. Probably a CLI option.
 
-#### Allow inspecting the standard output of any script usign `markright stdout`
+#### Allow inspecting the standard output of any script using `markright stdout`
 
 Once titling scripts is implemented, add this command which will print the last
 stdout known for this script based on a cache where all stdout will be stored.
@@ -413,12 +359,6 @@ error/fallback if they don't exist like is done currently.
 
 Currently it is one or the other.
 
-#### Add a generalized parameter support to the info text
-
-Syntax like `title Test param true label "string content" stdout "expected..."`
-could be supported so that we could enable some of the other todos, like the one
-for supporting inline stdout/stderr validation etc.
-
 #### Make ESM2CJS ignore (or select) given files to avoid changes in submodules
 
 This will simplify `main.yml`.
@@ -428,3 +368,29 @@ This will simplify `main.yml`.
 https://github.com/TomasHubelbauer/code-extension-screencast
 
 Generate the screenshot animation as a part of the GitHub Actions workflow.
+
+#### Replace previous output line with the current one and show step counter
+
+Right now the output looks like this:
+
+```
+Created test
+Executed shell script
+Verified stdout match
+…
+```
+
+Perhaps there should be only a single line which would update to always show the
+latest that's happening and could show opening and closing message for each step
+so that long-running actions (like WSB) would show `Executing sandbox script…`
+for a while and then `Executed sandbox script` would flash followed by whatever
+step came next.
+
+Also the line could be prefixed by the current code block number in the document
+order or even better a line number (and if we go that route a percentage or even
+a progress bar could be displayed).
+
+Maybe this is only appropriate for the watch mode and not for the build mode? I
+need to look into how this stuff works and what it leaves in the standard output
+stream, for the build mode we definitely want a faithful record of all the steps
+in the standard output.

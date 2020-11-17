@@ -304,35 +304,25 @@ them to surround the operator with white-space, should they so desire. E.g.:
 Applying this change, let's ensure the original set of test expressions still
 works:
 
-```sh
+```sh { "stdout": "12\n8\n20\n5\n" }
 node calc.js 10+2
 node calc.js 10-2
 node calc.js 10*2
 node calc.js 10/2
 ```
 
-```stdout
-12
-8
-20
-5
-```
+That looks okay.
 
 And with spaces:
 
-```sh
+```sh { "stdout": "12\n8\n20\n5\n" }
 node calc.js "10 + 2"
 node calc.js "10 - 2"
 node calc.js "10 * 2"
 node calc.js "10 / 2"
 ```
 
-```stdout
-12
-8
-20
-5
-```
+Everything still works as expected!
 
 ## Conclusion
 

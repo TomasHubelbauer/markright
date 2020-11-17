@@ -182,15 +182,21 @@ export default class MarkRight {
 
   // TODO: Add support for running in a given shell (sh, bash, posh, …) thru `_`
   async run_sh(/** @type {string} */ _, /** @type {string} */ text) {
-    if (_) {
-      throw new Error('Shell script can have no argument.');
-    }
+    const data = _ ? JSON.parse(_) : {};
 
     // TODO: Use an OS-appropriate shell instead of always PowerShell
     this.stdio = await exec(text, 'powershell');
 
     // TODO: Implement titling blocks or preview the script content for a title
     console.log('Executed shell script');
+
+    if (data.stdout) {
+      await this.run_stdout('', data.stdout);
+    }
+
+    if (data.stderr) {
+      await this.run_stdout(data.exitCode, data.stderr);
+    }
   }
 
   async run_stdout(/** @type {string} */ _, /** @type {string} */ text) {
