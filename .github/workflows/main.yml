@@ -43,7 +43,7 @@ jobs:
           if (-not $?) {
             throw "Failed to run pkg"
           }
-      - run: echo "::set-output name=version::$(npm view markright version)"
+      - run: echo "::set-output name=version::$(jq -r '.version' package.json)"
         id: version
       - uses: actions/create-release@v1
         id: create_release
