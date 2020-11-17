@@ -1,9 +1,10 @@
 {
   "name": "markright",
-  "version": "0.0.2",
+  "version": "0.0.0",
   "license": "AGPL-3.0-only",
   "repository": "tomashubelbauer/markright",
   "bin": "index.js",
+  "type": "module",
   "scripts": {
     "dev": "node . watch example/feature-showcase",
     "test": "node test",

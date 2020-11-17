@@ -13,19 +13,10 @@ jobs:
         uses: actions/setup-node@v2-beta
         with:
           node-version: '14'
-      - name: Run test, build binaries, bump version and cut a new release
+      - name: Run test, build binaries and bump version
         run: |
           Set-PSDebug -Trace 1
           $ErrorActionPreference = "Stop"
-
-          # Configure Git identity here already as `npm version` needs it
-          git config --global user.email "tomas@hubelbauer.net"
-          git config --global user.name "Tomas Hubelbauer"
-          
-          npm version patch
-          if (-not $?) {
-            throw "Failed to run npm version"
-          }
 
           git submodule update --recursive --init
           if (-not $?) {
@@ -46,10 +37,20 @@ jobs:
           if (-not $?) {
             throw "Failed to run pkg"
           }
+
+          # Let the GitHub Release GitHub Action create the Git tag
+          # Bump the version even if the Git working directory is not clean
+          npm --no-git-tag-version --force version patch
+          if (-not $?) {
+            throw "Failed to run npm version"
+          }
+
+          # Recover the EOF lost to `npm version`
+          echo "" >> package.json
       - name: Query the updated version for the release tag and title
         run: echo "::set-output name=version::$(jq -r '.version' package.json)"
         id: version
-      - name: Cut the new release
+      - name: Cut the new ${{steps.version.outputs.version}} release
         uses: actions/create-release@v1
         id: create_release
         env:
@@ -86,7 +87,7 @@ jobs:
           asset_path: markright-win.exe
           asset_name: markright-win.exe
           asset_content_type: application/octet-stream
-      - name: Push updated package.json with the new version number
+      - name: Push package.json with the ${{steps.version.outputs.version}} version number
         run: |
           Set-PSDebug -Trace 1
           $ErrorActionPreference = "Stop"
@@ -95,12 +96,16 @@ jobs:
           if (-not $?) {
             throw "Failed to run git add"
           }
-          
+
+          # Ditch all of the other unstaged changes in the working directory
           git checkout -- .
           if (-not $?) {
             throw "Failed to run git checkout"
           }
 
+          git config --global user.email "tomas@hubelbauer.net"
+          git config --global user.name "Tomas Hubelbauer"
+          
           git commit -m "Bump version to match release"
           if (-not $?) {
             throw "Failed to run git commit"
