@@ -114,6 +114,12 @@ jobs:
             throw "Failed to run git commit"
           }
 
+          # Reset changes in Git submodules and the lock file if any
+          git checkout -- .
+          if (-not $?) {
+            throw "Failed to run git checkout"
+          }
+
           git status
           if (-not $?) {
             throw "Failed to run git status"

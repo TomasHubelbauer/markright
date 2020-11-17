@@ -41,9 +41,9 @@ MarkRight is intended for use with didactic media (tutorials, documentation, …
 
 ## Installation
 
-### NPM
+### NPM/NPX
 
-`npm i -g tomashubelbauer/markright`
+`npm i -g tomashubelbauer/markright` or `npx tomashubelbauer/markright` ad-hoc
 
 You might need to run `git submodule update --recursive --init` to install the
 dependencies.
