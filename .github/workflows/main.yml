@@ -9,45 +9,56 @@ jobs:
     steps:
       - name: Check out the source code
         uses: actions/checkout@v2
-      - name: Use Node v14 which is known to work with PKG
+      - name: Switch to Node 14 (needed for PKG)
         uses: actions/setup-node@v2-beta
         with:
           node-version: '14'
-      - name: Run test, build binaries and bump version
+      - name: Run tests, build binaries and bump version
         run: |
           Set-PSDebug -Trace 1
           $ErrorActionPreference = "Stop"
 
+          # Initialize the dependencies in Git submodules
           git submodule update --recursive --init
           if (-not $?) {
             throw "Failed to run git submodule update"
           }
 
+          # Run the JavaScript and MarkDown tests
           node test
           if (-not $?) {
             throw "Failed to run node test"
           }
 
+          # Transpile the ESM source code to CJS for PKG
           npx tomashubelbauer/esm2cjs
           if (-not $?) {
             throw "Failed to run esm2cjs"
           }
 
+          # Build the binaries based on the CJS source code needed by PKG
           npx pkg . --debug
           if (-not $?) {
             throw "Failed to run pkg"
           }
 
-          # Recover the `type: "module"` key-value pair lost to ESM2CJS
-          jq '. + { type: "module" }' package.json > .package.json
-          rm package.json
-          mv .package.json package.json
+          # Reset changes made to the source code in the working tree by ESM2CJS
+          git checkout .
+          if (-not $?) {
+            throw "Failed to run git checkout"
+          }
 
-          # Let the GitHub Release GitHub Action create the Git tag
-          # Bump the version even if the Git working directory is not clean
-          npm --no-git-tag-version --force version patch
+          # Bump the version in package.json
+          # Note that the GitHub Release GitHub Action will add a tag not NPM
+          npm --no-git-tag-version version patch
           if (-not $?) {
             throw "Failed to run npm version"
+          }
+
+          # Stage the updated package.json to commit and push after the release
+          git add package.json
+          if (-not $?) {
+            throw "Failed to run git add"
           }
       - name: Query the updated version for the release tag and title
         run: echo "::set-output name=version::$(jq -r '.version' package.json)"
@@ -93,17 +104,6 @@ jobs:
         run: |
           Set-PSDebug -Trace 1
           $ErrorActionPreference = "Stop"
-
-          git add package.json
-          if (-not $?) {
-            throw "Failed to run git add"
-          }
-
-          # Ditch all of the other unstaged changes in the working directory
-          git checkout -- .
-          if (-not $?) {
-            throw "Failed to run git checkout"
-          }
 
           git config --global user.email "tomas@hubelbauer.net"
           git config --global user.name "Tomas Hubelbauer"
