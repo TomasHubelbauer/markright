@@ -113,6 +113,11 @@ jobs:
           if (-not $?) {
             throw "Failed to run git commit"
           }
+
+          git status
+          if (-not $?) {
+            throw "Failed to run git status"
+          }
           
           git pull --rebase
           if (-not $?) {
