@@ -34,9 +34,9 @@ jobs:
             throw "Failed to run node test"
           }
 
-          node transpile
+          npx tomashubelbauer/esm2cjs
           if (-not $?) {
-            throw "Failed to run node transpile"
+            throw "Failed to run esm2cjs"
           }
 
           npx pkg . --debug

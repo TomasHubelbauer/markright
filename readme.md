@@ -93,6 +93,9 @@ Run `npm test` to run all `*.test.js` modules as well as all `example` directory
 documents. Run `npm test ${regex}` to run only matching `*.test.js` modules and
 no `example` directory documents.
 
+Run `npx tomashubelbauer/esm2cjs` followed by `npx pkg .` to build the binaries
+for Windows, macOS and Linux.
+
 ### Changelog
 
 MarkRight is in WIP mode at the moment. The version is `0.0.0` and a release is
@@ -423,7 +426,3 @@ Currently it is one or the other.
 Syntax like `title Test param true label "string content" stdout "expected..."`
 could be supported so that we could enable some of the other todos, like the one
 for supporting inline stdout/stderr validation etc.
-
-#### Use `esm2cjs` instead of `transpile.js` to fix the GitHub Action workflow
-
-https://github.com/tomashubelbauer/esm2cjs
