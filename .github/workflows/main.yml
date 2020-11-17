@@ -49,6 +49,10 @@ jobs:
             throw "Failed to run git checkout"
           }
 
+          # Reset any changes made in the submodules
+          # TODO: Pass `node-wsb` as a parameter to `--ignore` of esm2cjs instead
+          git submodule foreach --recursive git reset --hard
+
           # Bump the version in package.json
           # Note that the GitHub Release GitHub Action will add a tag not NPM
           npm --no-git-tag-version version patch
@@ -57,9 +61,14 @@ jobs:
           }
 
           # Stage the updated package.json to commit and push after the release
-          git add package.json
+          git add package.json package-lock.json
           if (-not $?) {
             throw "Failed to run git add"
+          }
+
+          git status
+          if (-not $?) {
+            throw "Failed to run git status"
           }
       - name: Query the updated version for the release tag and title
         run: echo "::set-output name=version::$(jq -r '.version' package.json)"
@@ -112,17 +121,6 @@ jobs:
           git commit -m "Bump version to match release"
           if (-not $?) {
             throw "Failed to run git commit"
-          }
-
-          # Reset changes in Git submodules and the lock file if any
-          git checkout -- .
-          if (-not $?) {
-            throw "Failed to run git checkout"
-          }
-
-          git status
-          if (-not $?) {
-            throw "Failed to run git status"
           }
           
           git pull --rebase

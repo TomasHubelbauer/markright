@@ -417,3 +417,7 @@ Currently it is one or the other.
 Syntax like `title Test param true label "string content" stdout "expected..."`
 could be supported so that we could enable some of the other todos, like the one
 for supporting inline stdout/stderr validation etc.
+
+#### Make ESM2CJS ignore (or select) given files to avoid changes in submodules
+
+This will simplify `main.yml`.
