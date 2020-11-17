@@ -43,6 +43,7 @@ jobs:
           }
 
           # Reset changes made to the source code in the working tree by ESM2CJS
+          # Note that the binaries will not be reverted as they are Git-ignored
           git checkout .
           if (-not $?) {
             throw "Failed to run git checkout"
