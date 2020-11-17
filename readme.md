@@ -422,3 +422,9 @@ for supporting inline stdout/stderr validation etc.
 #### Make ESM2CJS ignore (or select) given files to avoid changes in submodules
 
 This will simplify `main.yml`.
+
+#### Polish VS Code screencast and use for programmatic animated screenshot
+
+https://github.com/TomasHubelbauer/code-extension-screencast
+
+Generate the screenshot animation as a part of the GitHub Actions workflow.
