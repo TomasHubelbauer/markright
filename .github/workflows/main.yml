@@ -113,7 +113,7 @@ jobs:
           git config --global user.email "tomas@hubelbauer.net"
           git config --global user.name "Tomas Hubelbauer"
           
-          git commit -m "Bump release to version to ${{steps.version.outputs.version}}"
+          git commit -m "Bump release version to ${{steps.version.outputs.version}}"
           if (-not $?) {
             throw "Failed to run git commit"
           }
