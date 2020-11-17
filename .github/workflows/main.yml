@@ -7,11 +7,14 @@ jobs:
   main:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2-beta
+      - name: Check out the source code
+        uses: actions/checkout@v2
+      - name: Use Node v14 which is known to work with PKG
+        uses: actions/setup-node@v2-beta
         with:
           node-version: '14'
-      - run: |
+      - name: Run test, build binaries, bump version and cut a new release
+        run: |
           Set-PSDebug -Trace 1
           $ErrorActionPreference = "Stop"
 
@@ -43,9 +46,11 @@ jobs:
           if (-not $?) {
             throw "Failed to run pkg"
           }
-      - run: echo "::set-output name=version::$(jq -r '.version' package.json)"
+      - name: Query the updated version for the release tag and title
+        run: echo "::set-output name=version::$(jq -r '.version' package.json)"
         id: version
-      - uses: actions/create-release@v1
+      - name: Cut the new release
+        uses: actions/create-release@v1
         id: create_release
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
@@ -54,7 +59,8 @@ jobs:
           release_name: ${{steps.version.outputs.version}}
           draft: false
           prerelease: false
-      - uses: actions/upload-release-asset@v1
+      - name: Upload the Linux binary release asset
+        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         with:
@@ -62,7 +68,8 @@ jobs:
           asset_path: markright-linux
           asset_name: markright-linux
           asset_content_type: application/octet-stream
-      - uses: actions/upload-release-asset@v1
+      - name: Upload the macOS binary release asset
+        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         with:
@@ -70,7 +77,8 @@ jobs:
           asset_path: markright-macos
           asset_name: markright-macos
           asset_content_type: application/octet-stream
-      - uses: actions/upload-release-asset@v1
+      - name: Upload the Windows binary release asset
+        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         with:
@@ -78,14 +86,32 @@ jobs:
           asset_path: markright-win.exe
           asset_name: markright-win.exe
           asset_content_type: application/octet-stream
-      - run: |
-          npm view markright version
-          git add package.json
-          git checkout -- .
-          if git diff-index --quiet HEAD --; then
-            exit
-          fi
+      - name: Push updated package.json with the new version number
+        run: |
+          Set-PSDebug -Trace 1
+          $ErrorActionPreference = "Stop"
 
-          git commit -m "Bump version"
+          git add package.json
+          if (-not $?) {
+            throw "Failed to run git add"
+          }
+          
+          git checkout -- .
+          if (-not $?) {
+            throw "Failed to run git checkout"
+          }
+
+          git commit -m "Bump version to match release"
+          if (-not $?) {
+            throw "Failed to run git commit"
+          }
+          
           git pull --rebase
+          if (-not $?) {
+            throw "Failed to run git pull"
+          }
+          
           git push
+          if (-not $?) {
+            throw "Failed to run git push"
+          }
