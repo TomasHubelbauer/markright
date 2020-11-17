@@ -8,6 +8,6 @@
     "dev": "node . watch example/feature-showcase",
     "test": "node test",
     "start": "node . watch"
-  }
+  },
+  "type": "module"
 }
-

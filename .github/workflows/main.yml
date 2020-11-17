@@ -38,15 +38,17 @@ jobs:
             throw "Failed to run pkg"
           }
 
+          # Recover the `type: "module"` key-value pair lost to ESM2CJS
+          jq '. + { type: "module" }' package.json > .package.json
+          rm package.json
+          mv .package.json package.json
+
           # Let the GitHub Release GitHub Action create the Git tag
           # Bump the version even if the Git working directory is not clean
           npm --no-git-tag-version --force version patch
           if (-not $?) {
             throw "Failed to run npm version"
           }
-
-          # Recover the EOF lost to `npm version`
-          echo "" >> package.json
       - name: Query the updated version for the release tag and title
         run: echo "::set-output name=version::$(jq -r '.version' package.json)"
         id: version
