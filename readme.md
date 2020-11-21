@@ -367,7 +367,11 @@ This will simplify `main.yml`.
 
 https://github.com/TomasHubelbauer/code-extension-screencast
 
-Generate the screenshot animation as a part of the GitHub Actions workflow.
+https://github.com/TomasHubelbauer/node-cdp-ws
+
+See if in the workflow, we could install and start VS Code, get ahold of its API
+interface, run a script which uses the API interface to demonstrate MarkRight in
+action, make a screenshot and commit it with the version bump if it has changed.
 
 #### Replace previous output line with the current one and show step counter
 
