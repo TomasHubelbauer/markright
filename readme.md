@@ -398,3 +398,7 @@ Maybe this is only appropriate for the watch mode and not for the build mode? I
 need to look into how this stuff works and what it leaves in the standard output
 stream, for the build mode we definitely want a faithful record of all the steps
 in the standard output.
+
+#### Use Caxa for ESM-compatible executable packaging
+
+https://github.com/leafac/caxa
