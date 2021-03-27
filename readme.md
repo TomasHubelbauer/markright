@@ -399,6 +399,9 @@ need to look into how this stuff works and what it leaves in the standard output
 stream, for the build mode we definitely want a faithful record of all the steps
 in the standard output.
 
-#### Use Caxa for ESM-compatible executable packaging
+#### Use Caxa for ESM-compatible executable packaging and drop ESM2CJS
 
-https://github.com/leafac/caxa
+Use https://github.com/leafac/caxa combined with a matrix GitHub Actions
+workflow, one such is shown in the Caxa repository.
+
+Maybe even delete ESM2CJS proper as it will be no longer needed.
