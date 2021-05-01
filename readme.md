@@ -405,3 +405,42 @@ Use https://github.com/leafac/caxa combined with a matrix GitHub Actions
 workflow, one such is shown in the Caxa repository.
 
 Maybe even delete ESM2CJS proper as it will be no longer needed.
+
+### Have a concept of a virtual cursor
+
+To simplify writing code such as:
+
+```
+func method() {
+  line1
+  line2
+  line3
+}
+```
+
+Over the course of several code blocks with prose around them:
+
+```
+func method() {
+```
+
+First line:
+```
+  line1
+```
+
+Second line:
+```
+  line2
+```
+
+Third line:
+```
+  line3
+}
+```
+
+Instead of using patch blocks, we could have a virtual cursor so even if we are
+editing in the middle of a file, it would just append there.
+
+A "hidden" suffix type thing could be added to add the final `}`.
