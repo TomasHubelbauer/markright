@@ -72,7 +72,7 @@ jobs:
         uses: actions/create-release@v1
         id: create_release
         env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          GITHUB_TOKEN: ${{github.token}}
         with:
           tag_name: ${{steps.version.outputs.version}}
           release_name: ${{steps.version.outputs.version}}
@@ -81,7 +81,7 @@ jobs:
       - name: Upload the Linux binary release asset
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          GITHUB_TOKEN: ${{github.token}}
         with:
           upload_url: ${{steps.create_release.outputs.upload_url}}
           asset_path: markright-linux
@@ -90,7 +90,7 @@ jobs:
       - name: Upload the macOS binary release asset
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          GITHUB_TOKEN: ${{github.token}}
         with:
           upload_url: ${{steps.create_release.outputs.upload_url}}
           asset_path: markright-macos
@@ -99,7 +99,7 @@ jobs:
       - name: Upload the Windows binary release asset
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          GITHUB_TOKEN: ${{github.token}}
         with:
           upload_url: ${{steps.create_release.outputs.upload_url}}
           asset_path: markright-win.exe
