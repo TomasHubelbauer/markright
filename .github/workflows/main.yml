@@ -1,14 +1,15 @@
 name: ci_cd
-on:
-  push:
-    branches:
-    - master
+on: push
+
 jobs:
   main:
     runs-on: windows-latest
     steps:
       - name: Check out the source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+        with:
+          ref: master
+          submodules: recursive
       - name: Switch to Node 14 (needed for PKG)
         uses: actions/setup-node@v2-beta
         with:
@@ -17,12 +18,6 @@ jobs:
         run: |
           Set-PSDebug -Trace 1
           $ErrorActionPreference = "Stop"
-
-          # Initialize the dependencies in Git submodules
-          git submodule update --recursive --init
-          if (-not $?) {
-            throw "Failed to run git submodule update"
-          }
 
           # Run the JavaScript and MarkDown tests
           node test
