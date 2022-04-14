@@ -8,7 +8,7 @@ jobs:
       - name: Check out the source code
         uses: actions/checkout@v3
         with:
-          ref: master
+          ref: main
           submodules: recursive
       - name: Switch to Node 14 (needed for PKG)
         uses: actions/setup-node@v2-beta
