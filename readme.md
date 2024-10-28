@@ -148,31 +148,17 @@ Do this in a Bun-friendly way, something easy, not a PITA.
 
 Clear the terminal in between runs.
 
-### Support specifying related path in the code block syntax as an alternative
+### Improve the parser to not require duplicating mode sigils with inline path
 
-We need an alternative for specifying the related path without printing it in
-the document:
+Currently `tag ..file-name.ext` is needed to specify a tag and the inline path
+while also distinguishing it from the meta.
 
-~~~
-`file-name.ext`:
+Doing it this way simplifies the parser implementation but makes for a worse
+user experience.
+It is a worthwhile trade-off for now, but should be improved down the line.
 
-```
-test
-```
-~~~
-
-Maybe something like this:
-
-~~~
-```txt file-name.txt. meta
-```
-~~~
-
-The period signifies the string is the file name and not the first item of the
-meta argument list.
-Other sigils supported instead of the trailing `.` are `!` to mark as append to
-the file and `?` to mark as a check for the file's contents match with the code
-block content.
+One option to solve this would be to require the paths to start with a period
+like in ESM path module specifiers, but I don't like that option too much.
 
 ### Respect the file management sigils on `Block` (`append` and `match`)
 

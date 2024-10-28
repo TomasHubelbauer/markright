@@ -492,3 +492,81 @@ test(
     }
   ])
 );
+
+test(
+  'path: internal, sigil: create, meta: no',
+  () => expect(extractBlocks('test\n```txt ..file-name.ext\ntest\n```\n')).toEqual([
+    {
+      tag: 'txt',
+      meta: '',
+      code: 'test\n',
+      path: 'file-name.ext',
+      mode: 'create'
+    }
+  ])
+);
+
+test(
+  'path: internal, sigil: append, meta: no',
+  () => expect(extractBlocks('test\n```txt !!file-name.ext\ntest\n```\n')).toEqual([
+    {
+      tag: 'txt',
+      meta: '',
+      code: 'test\n',
+      path: 'file-name.ext',
+      mode: 'append'
+    }
+  ])
+);
+
+test(
+  'path: internal, sigil: match, meta: no',
+  () => expect(extractBlocks('test\n```txt ??file-name.ext\ntest\n```\n')).toEqual([
+    {
+      tag: 'txt',
+      meta: '',
+      code: 'test\n',
+      path: 'file-name.ext',
+      mode: 'match'
+    }
+  ])
+);
+
+test(
+  'path: internal, sigil: create, meta: yes',
+  () => expect(extractBlocks('test\n```txt ..file-name.ext test\ntest\n```\n')).toEqual([
+    {
+      tag: 'txt',
+      meta: 'test',
+      code: 'test\n',
+      path: 'file-name.ext',
+      mode: 'create'
+    }
+  ])
+);
+
+test(
+  'path: internal, sigil: append, meta: yes',
+  () => expect(extractBlocks('test\n```txt !!file-name.ext test\ntest\n```\n')).toEqual([
+    {
+      tag: 'txt',
+      meta: 'test',
+      code: 'test\n',
+      path: 'file-name.ext',
+      mode: 'append'
+    }
+  ])
+);
+
+test(
+  'path: internal, sigil: match, meta: yes',
+  () => expect(extractBlocks('test\n```txt ??file-name.ext test\ntest\n```\n')).toEqual([
+    {
+      tag: 'txt',
+      meta: 'test',
+      code: 'test\n',
+      path: 'file-name.ext',
+      mode: 'match'
+    }
+  ])
+);

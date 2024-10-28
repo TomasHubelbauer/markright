@@ -14,6 +14,7 @@ export default function extractBlocks(text: string) {
     | 'block-tag'
     | 'block-meta-or-mode'
     | 'block-meta-after-mode'
+    | 'block-path'
     | 'block-meta'
     | 'code-line-start'
     | 'code-line'
@@ -206,6 +207,11 @@ export default function extractBlocks(text: string) {
             state = 'code-line-start';
             break;
           }
+          case '.': {
+            mode = 'create';
+            state = 'block-meta-after-mode';
+            break;
+          }
           case '!': {
             mode = 'append';
             state = 'block-meta-after-mode';
@@ -231,6 +237,12 @@ export default function extractBlocks(text: string) {
             state = 'code-line-start';
             break;
           }
+          case '.':
+          case '!':
+          case '?': {
+            state = 'block-path';
+            break;
+          }
           case ' ': {
             state = 'block-meta';
             break;
@@ -250,6 +262,24 @@ export default function extractBlocks(text: string) {
             meta += character;
             mode = undefined;
             state = 'block-meta';
+            break;
+          }
+        }
+
+        break;
+      }
+      case 'block-path': {
+        switch (character) {
+          case '\n': {
+            state = 'code-line-start';
+            break;
+          }
+          case ' ': {
+            state = 'block-meta';
+            break;
+          }
+          default: {
+            path += character;
             break;
           }
         }
