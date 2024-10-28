@@ -212,6 +212,8 @@ to keep repeating its name, so let's make these two changes:
    inherit the path of the last block that had a path
 2. Allow the `diff` and `patch` blocks to not specify `meta` in which case the
    path of the last block that had a path is used
+3. Make code blocks without external path assume the path of the last block that
+   had a path when they use the `!` or `?` sigil
 
 ### Add a subcommand to take in the difference between the file and the document
 
