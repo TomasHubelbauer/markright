@@ -174,37 +174,10 @@ Other sigils supported instead of the trailing `.` are `!` to mark as append to
 the file and `?` to mark as a check for the file's contents match with the code
 block content.
 
-### Recognize append and match sigils with externalized related file name
+### Respect the file management sigils on `Block` (`append` and `match`)
 
-Once we implement the above, the related file name and create, append and match
-sigils will be clear, but when the related file name is external like this:
-
-~~~
-`test`:
-
-```
-test
-```
-~~~
-
-There should be a way to specify the sigils still without affecting the language
-tag and the meta argument array.
-
-Probably like this:
-
-- `!` means append to the related file
-- `?` means match with the related file
-- `.` is not needed in this case, the lack of `!` and `?` implies it, but maybe
-  still support it for explicitness?
-- `tag !` allows language tag for append
-- `tag ?` allows language tag for match
-- `tag .` allows language tag for create which is redundant but maybe support
-  anyway for explicitness?
-- `tag ! meta` to support meta arguments for the handler
-- `tag ? meta` to support meta arguments for the handler
-- `tag . meta` to support meta arguments for the handler
-
-Deleting files is left to the `sh` handler.
+We're parsing these now but we have yet to start honoring them in the file
+management handling code.
 
 ### Consider how to implement the `patch` and `diff` language tags
 

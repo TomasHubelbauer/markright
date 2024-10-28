@@ -3,4 +3,5 @@ export type Block = {
   meta: string;
   code: string;
   path?: string;
+  mode?: 'create' | 'append' | 'match';
 };

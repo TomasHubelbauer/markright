@@ -12,6 +12,8 @@ export default function extractBlocks(text: string) {
     | 'path'
     | 'path-end'
     | 'block-tag'
+    | 'block-meta-or-mode'
+    | 'block-meta-after-mode'
     | 'block-meta'
     | 'code-line-start'
     | 'code-line'
@@ -31,6 +33,7 @@ export default function extractBlocks(text: string) {
   let meta = '';
   let code = '';
   let path = '';
+  let mode: undefined | 'create' | 'append' | 'match';
   let verbatim = false;
   const blocks: Block[] = [];
   for (let index = 0; index < text.length; index++) {
@@ -123,6 +126,16 @@ export default function extractBlocks(text: string) {
             state = 'block-tag';
             break;
           }
+          case '!': {
+            mode = 'append';
+            state = 'block-meta';
+            break;
+          }
+          case '?': {
+            mode = 'match';
+            state = 'block-meta';
+            break;
+          }
           case '\n': {
             state = 'code-line-start';
             break;
@@ -176,11 +189,67 @@ export default function extractBlocks(text: string) {
             break;
           }
           case ' ': {
-            state = 'block-meta';
+            state = 'block-meta-or-mode';
             break;
           }
           case '\n': {
             state = 'code-line-start';
+            break;
+          }
+        }
+
+        break;
+      }
+      case 'block-meta-or-mode': {
+        switch (character) {
+          case '\n': {
+            state = 'code-line-start';
+            break;
+          }
+          case '!': {
+            mode = 'append';
+            state = 'block-meta-after-mode';
+            break;
+          }
+          case '?': {
+            mode = 'match';
+            state = 'block-meta-after-mode';
+            break;
+          }
+          default: {
+            meta += character;
+            state = 'block-meta';
+            break;
+          }
+        }
+
+        break;
+      }
+      case 'block-meta-after-mode': {
+        switch (character) {
+          case '\n': {
+            state = 'code-line-start';
+            break;
+          }
+          case ' ': {
+            state = 'block-meta';
+            break;
+          }
+          default: {
+            switch (mode) {
+              case 'append': {
+                meta += '!';
+                break;
+              }
+              case 'match': {
+                meta += '?';
+                break;
+              }
+            }
+
+            meta += character;
+            mode = undefined;
+            state = 'block-meta';
             break;
           }
         }
@@ -270,8 +339,13 @@ export default function extractBlocks(text: string) {
           case '\n': {
             if (!verbatim) {
               const block: Block = { tag, meta, code };
+
               if (path) {
                 block.path = path;
+              }
+
+              if (mode) {
+                block.mode = mode;
               }
 
               blocks.push(block);
@@ -281,6 +355,7 @@ export default function extractBlocks(text: string) {
             meta = '';
             code = '';
             path = '';
+            mode = undefined;
             state = 'line-start';
             break;
           }
@@ -393,8 +468,13 @@ export default function extractBlocks(text: string) {
     case 'block-end-tick-3': {
       if (!verbatim) {
         const block: Block = { tag, meta, code };
+
         if (path) {
           block.path = path;
+        }
+
+        if (mode) {
+          block.mode = mode;
         }
 
         blocks.push(block);
@@ -406,8 +486,13 @@ export default function extractBlocks(text: string) {
       code += '`';
       if (!verbatim) {
         const block: Block = { tag, meta, code };
+
         if (path) {
           block.path = path;
+        }
+
+        if (mode) {
+          block.mode = mode;
         }
 
         blocks.push(block);
@@ -419,8 +504,13 @@ export default function extractBlocks(text: string) {
       code += '``';
       if (!verbatim) {
         const block: Block = { tag, meta, code };
+
         if (path) {
           block.path = path;
+        }
+
+        if (mode) {
+          block.mode = mode;
         }
 
         blocks.push(block);
