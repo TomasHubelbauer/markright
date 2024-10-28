@@ -201,6 +201,18 @@ Once I have the file management sigils and operations figured out, I should be
 able to reimplement that example in MarkRight again with the new version running
 on Bun to showcase the features it uses.
 
+https://raw.githubusercontent.com/TomasHubelbauer/markright/4fbead6a0b5a769d3ab04f1e3cb0c91b82df0e00/example/node-cli-calculator/readme.md
+
+### Add support for leaving out `diff`/`patch` meta and the `_` sigil
+
+When multiple code blocks in a row operate on the same file, it would be a pain
+to keep repeating its name, so let's make these two changes:
+
+1. Add the `_` sigil to code blocks without external path which makes the block
+   inherit the path of the last block that had a path
+2. Allow the `diff` and `patch` blocks to not specify `meta` in which case the
+   path of the last block that had a path is used
+
 ### Add a subcommand to take in the difference between the file and the document
 
 When the user goes and runs the document, then changes the files, make this new
