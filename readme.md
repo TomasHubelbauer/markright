@@ -1,446 +1,253 @@
 # MarkRight
 
-[![](https://github.com/tomashubelbauer/markright/workflows/ci_cd/badge.svg)](https://github.com/tomashubelbauer/markright/actions)
-[![](https://img.shields.io/github/stars/tomashubelbauer/markright)](https://github.com/tomashubelbauer/markright/stargazers)
-[![](https://img.shields.io/github/issues/tomashubelbauer/markright)](https://github.com/tomashubelbauer/markright/stargazers)
-[![](https://img.shields.io/github/forks/tomashubelbauer/markright)](https://github.com/tomashubelbauer/markright/network/members)
-[![](https://img.shields.io/github/license/tomashubelbauer/markright)](license.md)
-[![](https://img.shields.io/badge/sponsor-@tomashubelbauer-orange)](https://github.com/sponsors/tomashubelbauer)
-[![](https://img.shields.io/github/v/release/tomashubelbauer/markright)](https://github.com/tomashubelbauer/markright/releases)
+MarkRight is a tool for didactic literate programming.
 
-![](screenshot.png)
+It works by scanning a MarkDown files for fenced code blocks adorned with extra
+instructions and acting on those instructions to execute code, create files etc.
 
-**MarkRight** is a tool for didactic literate programming. It scans a MarkDown
-document for fenced code blocks and takes action on ones whose info strings mark
-a MarkRight action:
+The artifact of the MarkRight document exection might be a file, a program or a
+process that has happened and left desirable side effects.
 
-~~~
-```js hello-world.js
-console.log('Hello, world!');
-```
-~~~
-
-This will create a JavaScript file named `hello-world.js`.
-
-~~~
-```sh
-rm hello-world
-```
-~~~
-
-This will delete the `hello-world.js` file by running a shell script.
-
-MarkRight treats a MarkDown document as a single source of truth and lets all of
-the other source code fall out, specification and implementation are forced to
-remain synchronized and can never diverge.
-
-See the [**`feature-showcase` example**](example/feature-showcase) for a rundown
-of all MarkRight features.
-
-MarkRight is intended for use with didactic media (tutorials, documentation, …).
-
-## Installation
-
-### NPM/NPX
-
-`npm i -g tomashubelbauer/markright` or `npx tomashubelbauer/markright` ad-hoc
-
-You might need to run `git submodule update --recursive --init` to install the
-dependencies.
-
-### Releases
-
-Windows, macOS and Linux binaries are available in [Releases].
-
-[Releases]: https://github.com/tomashubelbauer/markright/releases/latest
-
-## Usage
-
-- `markright` (`readme.md`)
-- `markright build` (`readme.md`)
-- `markright build document.md`
-- `markright watch` (`readme.md`)
-- `markright watch document.md`
+MarkRight documents are primarily append-only capturing new changes to apply to
+the existing instructions and their artifacts.
 
 ## Examples
 
-See the [`example` directory](example) subdirectories for a variety of examples.
+By default, MarkRight will ignore code blocks which lack a language tag or whose
+language tag it doesn't have support for.
 
-To run MarkRight from source against an example in that directory, run
-`npm start example/${name}` (`markright watch example/${name}`).
+A code block like this will have no effect:
 
-## Source Control
+~~~
+```
+Hello, world!
+```
+~~~
 
-The generated content should still be tracked in source control to ensure it is
-easily accessibly even without running MarkRight to generate it. This is useful
-for source control web UIs and further emphasises the goal of didactic benefit.
+MarkRight will exit with empty output upon executing such a document.
 
-## Limitations
+The most basic example of a MarkRight document that would give output would be
+this document where the code block has the special `stdout` language tag:
 
-- MarkRight converts CRLF in file text into LF for easier internal processing
-- MarkRight assumes all text files it is fed are UTF-8 without BOM without check
-- MarkRight reserves `?` and `!` at the end of file names for action modifiers
-- MarkRight reserves `_` as a placeholder file name, won't use `_` name verbatim
-- MarkRight can't output `~` and `` ` `` into file names due to MarkDown syntax
-  rules (neither is allowed in a fenced code block info string)
-- MarkRight's only supported way of referencing/pulling external assets is thru
-  the use of scripts (`mv`, `cp`, `curl`, `wget`, whatever other way…)
+~~~
+```stdout
+Hello, world!
+```
+~~~
 
-## License
+Run `markright demo/stdout/readme.md` or `markright demo/stdout` to execute this
+example.
 
-MarkRight is licensed under the terms of the [AGPL 3.0only](license.md) license.
+The `stdout` language tag instructs MarkRight to dump the code block's text to
+the standard output stream of the MarkRight process.
+
+`stderr` is supported with analoguous behavior for the standard error stream and
+there is a respective example of this in `demo/stderr`.
+The standard error lines appear in red and you can verify they are in stderr by
+splitting the I/O streams and writing them into respective files:
+`markright demo/stderr 2>> error 1>> output`.
+
+See [Handlers](#handlers) for the list of supported language tag handlers.
+
+Another similar example would be the JavaScript Hello World expression one in
+`demo/javascript-expression` which demonstrates that JavaScript code blocks that
+produce output redirect their output to MarkRight's output stream.
+
+See also `demo/javascript-exception` to see the special-cased behavior of
+exceptions getting written to the standard error stream.
+
+Note that by default MarkRight looks for a `readme.md` file in the current
+directory.
+
+MarkRight code blocks can also create and update files.
+To create a file, prepend a code span with the file name suffixed by a colon
+atop the code block it relates to with nothing but whitespace in between:
+
+~~~
+`file-name.ext`:
+
+```
+Hello, world!
+```
+~~~
+
+This code block's text will get written to `file-name.ext` even though it has no
+language tag, because it have an associated path.
+If there was a language tag, its handler's standard streams would get redirected
+to the file.
+
+## Handlers
+
+### `txt`
+
+Alias for the `stdout` language tag.
+Useful for forcing the code block to be included in the output which it wouldn't
+without a language tag.
+Shorter than `stdout` and without the `stdout`/`stderr` parity baggage if only
+the former is used in the document.
+Implied when the code block has an associated path even if it has no language
+tag.
+
+### `stdout`
+
+Writes the code block's text to the MarkRight's standard output I/O stream.
+
+### `stderr`
+
+Writes the code block's text to the MarkRight's standard error I/O stream.
+
+### `js` / `javascript`
+
+Evaluates the code block as JavaScript using Bun's `eval` function.
+Writes the output of the last expression, if any, to standard output, unless an
+exception was thrown, in which case it gets written to standard error.
+
+Note that this handler uses `eval` and as such does not support `async`/`await`.
+See https://github.com/oven-sh/bun/issues/14873 for more information.
+
+Note that JSX is not supported.
+
+### `ts` / `typescript`
+
+Transpiles the provided TypeScript code to JavaScript using Bun's transpiler and
+executes it using the JavaScript handler.
+
+Note that TLS and JSX is not supported, see the JavaScript handler section for
+more information.
+
+Note that Bun doesn't support evaluating TypeScript directly yet, see here:
+https://github.com/oven-sh/bun/issues/11976
 
 ## Development
 
-Run `npm run dev` to run the `example/feature-showcase` document which contains
-all features.
+Run tests using `bun test`.
+Use `.only` to work on individual tests.
 
-Run `npm test` to run all `*.test.js` modules as well as all `example` directory
-documents. Run `npm test ${regex}` to run only matching `*.test.js` modules and
-no `example` directory documents.
+Run using `bun .` to run on `readme.md` or `bun . /directory/file.md` to run on
+a non-default document.
 
-Run `npx tomashubelbauer/esm2cjs` followed by `npx pkg .` to build the binaries
-for Windows, macOS and Linux.
+## To-Do
 
-### Changelog
+### Return GitHub Actions workflow and its corresponding readme badge
 
-MarkRight is in WIP mode at the moment. The version is `0.0.0` and a release is
-cut for each commit which passes the CI tests. Once MarkRight reaches `1.0`,
-semantic versioning will be used instead and releases will be cut with each
-version change and will contain a proper changelog.
+- Use Bun GitHub Actions support
+- Run the unit tests
+- Run Bun's bundler to product executables for all platforms
+- Bump `package.json` version using `bun version patch` if supported
+- Stage the `package.json` Git change
+- Use `jq` to query the new version
+- Use `actions/create-release` to create a new release with the version
+- Use `actions/upload-release-asset` to upload the platform executables
+- Commit and push the `package.json` change
 
-### To-Do
+### Distribute to JSR or maybe even NPM as an executable package
 
-#### Address code to-do comments
+Do this in a Bun-friendly way, something easy, not a PITA.
 
-Use [`todo`](https://github.com/tomashubelbauer/todo).
+### Add a `--watch` command to keep watching the file for changes
 
-#### Cache the unchanged layers
+Clear the terminal in between runs.
 
-Do not run the whole document each time, recognize the changed part (usually the
-very end) and run only the part that has changed.
+### Support specifying related path in the code block syntax as an alternative
 
-#### Think about VS Code Intellisense support
-
-This one is going to be very tricky… For each code block, we need to determine
-the full content of the file it relates to (because it might be a patch block)
-and use that code to fuel the Intellisense for the given language.
-
-Remains to be seen if this is going to even be possible using the VS Code API.
-
-It might also be necessary to either store the texts in temporary files or use
-the generated files and only "translate" the cursor in the code block to the
-backing content in the generated file so that things like modules work (VS Code
-knows what to suggest for module paths etc.).
-
-#### Use a more concise syntax for shell code block info string options
-
-Right now the options are in JSON, which is verbose, we could get something more
-tailored and concise.
+We need an alternative for specifying the related path without printing it in
+the document:
 
 ~~~
-```sh 0 "Hello, world!"
-node .
+`file-name.ext`:
+
+```
+test
 ```
 ~~~
 
-This will check stdout for the given text and also stderr for emptiness.
+Maybe something like this:
 
 ~~~
-```sh 1 "No argument provided"
-node .
-```
-~~~
-
-This will check stderr for the given text and also stdout for emptiness.
-
-Maybe this could be allowed, too:
-
-~~~
-```sh 1 "Argument count: 0" "No argument provided"
-node .
+```txt file-name.txt. meta
 ```
 ~~~
 
-To check both stdout and stderr at the same time.
+The period signifies the string is the file name and not the first item of the
+meta argument list.
+Other sigils supported instead of the trailing `.` are `!` to mark as append to
+the file and `?` to mark as a check for the file's contents match with the code
+block content.
 
-#### Consider allowing regex pre-processing in standard I/O checks
+### Recognize append and match sigils with externalized related file name
 
-This would be useful for normalizing things like file system  paths, dates and
-random numbers in the output. E.g.:
-
-~~~
-```stdout \d+ g {random number}
-Your random number is: {random number}.
-```
-~~~
-
-Also applies to the inline standard I/O checks in shell code block options.
-
-#### Support mixed `+` and `-` in patch and support unchanged lines in patch
-
-Unchanged lines in patch will make detecting patch from insert/append harder but
-it should still be possible to detect: all lines either start with a sign symbol
-or are present in the file verbatim [in case of unchanged lines] in the correct,
-patch, order.
-
-#### Add support for taking in changes and turning them to MarkRight instructions
-
-This feature might make the need for Intellisense support a little less urgent:
-
-Author MarkRight and each time a more complex code change is needed to be done
-to a generated file, just make it there. MarkRight will have a command to tell
-it to pull in the changes made to the generated files as compated to what it
-would generate as currently written. Once these changes are gathered, fenced
-code blocks from them are appended to the MarkRight document. The most optimal
-type of fenced code block (`patch` or `!`) is chosen.
-
-If running in watch mode, MarkRight should  recognize changes made to the
-generated files (by the user, not the ones it does while generating them) and
-append and update the pending auto-generated appended code blocks as long as
-the user keeps changing the generated files. Take them as committed once the
-user edits the MarkRight document itself again, at which point a new set of live
-fenced code blocks should be generated and kept being refreshed while the user
-edits the generated files.
-
-#### Fix the `Pkg: Error reading from file.` error using `rcedit` on the binary
-
-When using this in the CI to apply an icon to the Windows executable:
-
-```
-curl -L https://github.com/electron/rcedit/releases/latest/download/rcedit-x64.exe -o rcedit.exe
-./rcedit markright-win.exe --set-icon icon.ico
-```
-
-I get the above error while running the executable. Before applying the icon,
-the executable works just fine.
-
-#### Fix changes in the document picked out by the watcher resulting in empty run
-
-Here and there after the initial `npm test` run, when the `readme.me` is changed
-and the `watch` picks it up, the only line printed is `Processed readme.md`, but
-none of the code-blocks have actually run.
-
-#### Consider enabling printing stdout/stderr of a long running script out
-
-#### Allow using a regex for `stdout` check to be able to capture optional lines
+Once we implement the above, the related file name and create, append and match
+sigils will be clear, but when the related file name is external like this:
 
 ~~~
-```stdout regex
-(Tool installed!)?\r?\n
-Version: 0.0.0
+`test`:
+
+```
+test
 ```
 ~~~
 
-The above will match both:
+There should be a way to specify the sigils still without affecting the language
+tag and the meta argument array.
 
-```
-Tool installed!
-Version: 0.0.0
-```
+Probably like this:
 
-As well as:
+- `!` means append to the related file
+- `?` means match with the related file
+- `.` is not needed in this case, the lack of `!` and `?` implies it, but maybe
+  still support it for explicitness?
+- `tag !` allows language tag for append
+- `tag ?` allows language tag for match
+- `tag .` allows language tag for create which is redundant but maybe support
+  anyway for explicitness?
+- `tag ! meta` to support meta arguments for the handler
+- `tag ? meta` to support meta arguments for the handler
+- `tag . meta` to support meta arguments for the handler
 
-```
-Version: 0.0.0
-```
+Deleting files is left to the `sh` handler.
 
-#### Allow marking scripts by the platform they should run on
+### Consider how to implement the `patch` and `diff` language tags
 
-- `powershell win` runs on Windows, skipped elsewhere
-- `powershell win,linux` runs on Windows and Linux, skipped elsewhere
-- `bash macos` runs on macOS, skipped elsewhere
+The `patch` and `diff` language tags might need special treatment as handlers do
+not have access to the file content so these will need to work on the file
+management level not like normal handlers probably.
 
-Authors will have an option to include several scripts, on for each platform,
-and only the correct one for the given platform will be executed.
+See the `MarkRight` file in the Node-based implementation I replaced to see how
+it used to work, but for the Bun-based implementation, probably just call out to
+Git to apply the changes.
 
-#### Fix fenced code block with just `powershell` for language creating a file
+### Consider allowing to specify what shell to use in the shell handler
 
-~~~
-```powershell
-yo code `
-  --extensionType command-ts `
-  --extensionDisplayName MarkRight `
-  --extensionName vscode-markright `
-  --extensionDescription "MarkRight support for VS Code" `
-  --gitInit false `
-  --pkgManager npm `
+Support the `bash`, `zsh` etc. language tags and take the choice of the shell
+into an account in the execution.
 
-```
-~~~
+Add examples that showcase the various shell's features to prove they shell
+selection works.
 
-This fenced code block resulted in a file by the name of `powershell` being
-created, when it should just be skipped instead.
+### Return support for the Windows Sandbox feature
 
-#### Develop a VS Code extension which bundles MarkRight and runs it on `*.md`
+Run PowerShell scripts in the Windows Sandbox and get back their outputs.
+Also maybe file manage in the Windows Sandbox?
 
-The extension would active on MarkDown files in general or maybe on MarkDown
-files which already have MarkRight fenced code blocks and would ask if it
-should watch the file for you and run it each time you save your changes to it.
+### Recover the CLI calculator example and reimplement it in Bun
 
-https://github.com/tomashubelbauer/markright-vscode
+Once I have the file management sigils and operations figured out, I should be
+able to reimplement that example in MarkRight again with the new version running
+on Bun to showcase the features it uses.
 
-#### Allow titling shell code blocks
+### Add a subcommand to take in the difference between the file and the document
 
-~~~
-```sh run-a-script
-...
-```
-~~~
+When the user goes and runs the document, then changes the files, make this new
+subcommand determine the differences between what is there and what MarkRight
+had generated and add the diffs at the end of the document.
 
-In the output of MarkRight this should print:
-`Executed run-a-script shell script`
+### Make a VS Code extension for automatically colleting MarkRight changes
 
-We need to figure out how to make this work with `stdout` and `stderr` checks.
+This is related to the above task about bringing in diffs after user made edits
+to the artifacts MarkRight dropped.
+Make it possible to just work on files and have the MarkRight document be built
+for you with the possibility to jump in and add your comments as needed.
 
-#### Add a command line option to erase the directory prior to the run
+### Consider adding a new file management sigil to tee to file and terminal both
 
-This will be useful in prototyping as the starting conditions will always be
-known so unexpected states (files conflicting with moves, incorrect versions of
-dependencies being installed etc.) are minimized.
-
-It's always ideal to handle this stuff in the script dynamically, recognize and
-act on the various exceptional conditions, but to aid prototyping, we'll provide
-this quality of life improvement.
-
-#### Offer an option to run in Windows Sandbox by using a shared directory
-
-Probably by allowing `wsb` as a control keyword in a shell script fenced code
-block info string. For prototyping, `wsb` could be the language tag itself.
-
-Prototyped in `wsb.js`.
-
-##### Docker
-
-As a more general option / an alternative on macOS and Linux, Docker could be
-used in the same way if installed.
-
-#### Add a `node` shell script type which runs Node and tell the version used
-
-Run using:
-
-```sh
-node -e "line 1
-line 2
-line 3"
-```
-
-Maybe `node` can be passed to `shell` in `child_process.exec`?
-
-#### Fix the issue with binaries not being found in `%PATH%` when they are there
-
-Shell script in MarkDown will not find a newly installed binary in PATH even if
-using another shell script block to force reloading PATH. This is persistent, I
-have not been able to make the binary work across restarts of MarkRight, the IDE
-etc.
-
-Perhaps MarkRight should explicitly set path each time it runs a shell script
-(can this be done?) and check the path when a script ends and make sure that
-newly added entries are sent to the new script block.
-
-#### Allow running the whole MarkRight document execution in Windows Sandbox
-
-In addition to running individual script blocks this way. Probably a CLI option.
-
-#### Allow inspecting the standard output of any script using `markright stdout`
-
-Once titling scripts is implemented, add this command which will print the last
-stdout known for this script based on a cache where all stdout will be stored.
-Maybe we should require MarkRight be run with `--cache` or similar to tell it to
-do cache the stdout (stdio?) data to avoid surprising behavior with potentially
-giant caches.
-
-#### Check that the language tag is a-z0-9 and pull impl from `lang/${tag}`
-
-Pull out the various implementations from a module file using `await import` and
-error/fallback if they don't exist like is done currently.
-
-#### Allow a script to be both executed and output to a file at once
-
-Currently it is one or the other.
-
-#### Make ESM2CJS ignore (or select) given files to avoid changes in submodules
-
-This will simplify `main.yml`.
-
-#### Polish VS Code screencast and use for programmatic animated screenshot
-
-https://github.com/TomasHubelbauer/code-extension-screencast
-
-https://github.com/TomasHubelbauer/node-cdp-ws
-
-See if in the workflow, we could install and start VS Code, get ahold of its API
-interface, run a script which uses the API interface to demonstrate MarkRight in
-action, make a screenshot and commit it with the version bump if it has changed.
-
-#### Replace previous output line with the current one and show step counter
-
-Right now the output looks like this:
-
-```
-Created test
-Executed shell script
-Verified stdout match
-…
-```
-
-Perhaps there should be only a single line which would update to always show the
-latest that's happening and could show opening and closing message for each step
-so that long-running actions (like WSB) would show `Executing sandbox script…`
-for a while and then `Executed sandbox script` would flash followed by whatever
-step came next.
-
-Also the line could be prefixed by the current code block number in the document
-order or even better a line number (and if we go that route a percentage or even
-a progress bar could be displayed).
-
-Maybe this is only appropriate for the watch mode and not for the build mode? I
-need to look into how this stuff works and what it leaves in the standard output
-stream, for the build mode we definitely want a faithful record of all the steps
-in the standard output.
-
-#### Use Caxa for ESM-compatible executable packaging and drop ESM2CJS
-
-Use https://github.com/leafac/caxa combined with a matrix GitHub Actions
-workflow, one such is shown in the Caxa repository.
-
-Maybe even delete ESM2CJS proper as it will be no longer needed.
-
-### Have a concept of a virtual cursor
-
-To simplify writing code such as:
-
-```
-func method() {
-  line1
-  line2
-  line3
-}
-```
-
-Over the course of several code blocks with prose around them:
-
-```
-func method() {
-```
-
-First line:
-```
-  line1
-```
-
-Second line:
-```
-  line2
-```
-
-Third line:
-```
-  line3
-}
-```
-
-Instead of using patch blocks, we could have a virtual cursor so even if we are
-editing in the middle of a file, it would just append there.
-
-A "hidden" suffix type thing could be added to add the final `}`.
+This could be useful?
