@@ -355,7 +355,7 @@ test(
   ])
 );
 
-test.only(
+test(
   'path: external, tag: no, sigil: none',
   () => expect(extractBlocks('test\n`file-name.ext`:\n\n```\ntest\n```\n')).toEqual([
     {
@@ -367,7 +367,7 @@ test.only(
   ])
 );
 
-test.only(
+test(
   'path: external, tag: no, sigil: append',
   () => expect(extractBlocks('test\n`file-name.ext`:\n\n```!\ntest\n```\n')).toEqual([
     {
@@ -380,7 +380,7 @@ test.only(
   ])
 );
 
-test.only(
+test(
   'path: external, tag: no, sigil: match',
   () => expect(extractBlocks('test\n`file-name.ext`:\n\n```?\ntest\n```\n')).toEqual([
     {
@@ -393,7 +393,7 @@ test.only(
   ])
 );
 
-test.only(
+test(
   'path: external, tag: yes, sigil: none, meta: no',
   () => expect(extractBlocks('test\n`file-name.ext`:\n\n```txt\ntest\n```\n')).toEqual([
     {
@@ -405,7 +405,7 @@ test.only(
   ])
 );
 
-test.only(
+test(
   'path: external, tag: yes, sigil: append, meta: no',
   () => expect(extractBlocks('test\n`file-name.ext`:\n\n```txt !\ntest\n```\n')).toEqual([
     {
@@ -418,7 +418,7 @@ test.only(
   ])
 );
 
-test.only(
+test(
   'path: external, tag: yes, sigil: match, meta: no',
   () => expect(extractBlocks('test\n`file-name.ext`:\n\n```txt ?\ntest\n```\n')).toEqual([
     {
@@ -431,7 +431,7 @@ test.only(
   ])
 );
 
-test.only(
+test(
   'path: external, tag: yes, sigil: none, meta: yes',
   () => expect(extractBlocks('test\n`file-name.ext`:\n\n```txt test\ntest\n```\n')).toEqual([
     {
@@ -443,7 +443,7 @@ test.only(
   ])
 );
 
-test.only(
+test(
   'path: external, tag: yes, sigil: none, meta: !yes',
   () => expect(extractBlocks('test\n`file-name.ext`:\n\n```txt !test\ntest\n```\n')).toEqual([
     {
@@ -455,7 +455,7 @@ test.only(
   ])
 );
 
-test.only(
+test(
   'path: external, tag: yes, sigil: none, meta: ?yes',
   () => expect(extractBlocks('test\n`file-name.ext`:\n\n```txt ?test\ntest\n```\n')).toEqual([
     {
@@ -467,7 +467,7 @@ test.only(
   ])
 );
 
-test.only(
+test(
   'path: external, tag: yes, sigil: append, meta: yes',
   () => expect(extractBlocks('test\n`file-name.ext`:\n\n```txt ! test\ntest\n```\n')).toEqual([
     {
@@ -480,7 +480,7 @@ test.only(
   ])
 );
 
-test.only(
+test(
   'path: external, tag: yes, sigil: match, meta: yes',
   () => expect(extractBlocks('test\n`file-name.ext`:\n\n```txt ? test\ntest\n```\n')).toEqual([
     {
