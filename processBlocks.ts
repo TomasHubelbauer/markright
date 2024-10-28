@@ -40,15 +40,24 @@ export default async function processBlocks(blocks: Block[]) {
       continue;
     }
 
+    // Bypass the handlers if the block mode is 'match' and just check the text
+    if (block.path && block.mode === 'match') {
+      const file = Bun.file(block.path);
+      const text = await file.text();
+      if (block.code !== text) {
+        console.error(`'${block.path} does not match the expected content`);
+      }
+
+      continue;
+    }
+
     try {
       // See https://github.com/oven-sh/bun/issues/14874 for a better option
       const originalConsoleLog = console.log;
       const originalConsoleError = console.error;
 
       if (block.path) {
-        // TODO: Add `{ flags: 'a' }` if this should be an append operation as
-        // determined by nascent code block flags for file handling
-        const file = fs.createWriteStream(block.path);
+        const file = fs.createWriteStream(block.path, { flags: block.mode === 'append' ? 'a' : undefined });
         console.log = (...args: any[]) => file.write(args.join(' ') + '\n');
         console.error = (...args: any[]) => file.write(args.join(' ') + '\n');
       }
@@ -58,7 +67,7 @@ export default async function processBlocks(blocks: Block[]) {
       }
       else {
         if (block.meta) {
-          console.error(`Warning: ${tag} language tag handler does not support block meta`);
+          console.error(`'${tag}' language tag handler does not support block meta`);
         }
 
         await handlerWithoutMeta(block.code);

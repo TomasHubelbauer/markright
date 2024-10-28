@@ -160,10 +160,12 @@ It is a worthwhile trade-off for now, but should be improved down the line.
 One option to solve this would be to require the paths to start with a period
 like in ESM path module specifiers, but I don't like that option too much.
 
-### Respect the file management sigils on `Block` (`append` and `match`)
+### Add unit tests for the demo files
 
-We're parsing these now but we have yet to start honoring them in the file
-management handling code.
+Create a wrapper to catch `console.log` and `console.error` calls like I already
+do in `processBlocks` and compare the expected output with the real output.
+
+In file management demos, also check the files on disk and clean up after.
 
 ### Consider how to implement the `patch` and `diff` language tags
 
