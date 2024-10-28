@@ -1,3 +1,4 @@
+import { $ } from 'bun';
 import type { Block } from './Block';
 import fs from 'fs';
 import processStdoutBlock from './processStdoutBlock';
@@ -36,7 +37,7 @@ export default async function processBlocks(blocks: Block[]) {
       throw new Error(`Duplicate handlers for the ${tag} language tag`);
     }
 
-    if (!handlerWithMeta && !handlerWithoutMeta) {
+    if (!handlerWithMeta && !handlerWithoutMeta && block.tag !== 'diff' && block.tag !== 'patch') {
       continue;
     }
 
@@ -46,6 +47,27 @@ export default async function processBlocks(blocks: Block[]) {
       const text = await file.text();
       if (block.code !== text) {
         console.error(`'${block.path} does not match the expected content`);
+      }
+
+      continue;
+    }
+
+    // Bypass the handlers if the block mode is `diff` or `patch` and apply it
+    if (block.tag === 'diff' || block.tag === 'patch') {
+      if (!(await Bun.file(block.meta).exists())) {
+        console.error(`'${block.meta}' does not exist to patch changes to`);
+      }
+
+      const { stdout: stdoutBuffer, stderr: stderrBuffer } = await $`echo ${block.code} | patch ${block.meta}`.quiet();
+      const stdout = stdoutBuffer.toString();
+      const stderr = stderrBuffer.toString();
+
+      if (stdout !== `patching file ${block.meta}\n`) {
+        console.error(stdout);
+      }
+
+      if (stderr) {
+        console.error(stderr);
       }
 
       continue;

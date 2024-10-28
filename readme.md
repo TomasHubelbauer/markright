@@ -167,15 +167,20 @@ do in `processBlocks` and compare the expected output with the real output.
 
 In file management demos, also check the files on disk and clean up after.
 
-### Consider how to implement the `patch` and `diff` language tags
+### Find a way to allow `diff`/`patch` code blocks to not have hunk context line
 
-The `patch` and `diff` language tags might need special treatment as handlers do
-not have access to the file content so these will need to work on the file
-management level not like normal handlers probably.
+The `@@` line.
+The `patch` utility seems to require these, it will not try to match and patch
+loosely.
+The `git apply` command has `--unidiff-zero` which seems to allow not providing
+the context lines but it was giving me trouble probably because the file I am
+trying to apply to is not necessarily tracked by Git?
 
-See the `MarkRight` file in the Node-based implementation I replaced to see how
-it used to work, but for the Bun-based implementation, probably just call out to
-Git to apply the changes.
+If there is no way to get rid of these, maybe I could generate the hunk context
+by assuming the changes are for the whole file?
+This would massively lessen the utility of this code block though.
+Maybe there is a path where I derive the start and end lines and only require
+that the diff/patch code is a single hunk maybe?
 
 ### Consider allowing to specify what shell to use in the shell handler
 
