@@ -1,4 +1,5 @@
-# Binaries
-markright-linux
-markright-macos
-markright-win.exe
+# NPM
+node_modules
+
+# Bun
+bun.lockb
